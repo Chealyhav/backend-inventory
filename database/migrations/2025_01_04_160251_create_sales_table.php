@@ -15,32 +15,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id');
             $table->integer('quantity');
-            $table->decimal('price', 10, 2);
-
-            $table->decimal('discount', 10, 2)->default(0);
-            $table->decimal('augmented_price', 10, 2)->default(0);
-            $table->decimal('kg_price', 10, 2)->default(0);
-            $table->decimal('kg', 10, 2)->default(0);
-            $table->decimal('service_charge', 10, 2)->default(0);
+            $table->float('price')->default(0);
             $table->decimal('total_price', 10, 2)->default(0);
             $table->decimal('subtotal', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2)->default(0);
-            $table->string('sale_type')->default('accessory');
+            $table->string('sale_type')->default('finished_goods');
             $table->string('sale_status')->default('pending');
-            $table->string('service_name')->nullable();
             $table->date('delivery_date')->nullable();
             $table->date('sale_date');
-
-            $table->string('customer_name')->nullable();
-            $table->string('customer_address')->nullable();
-            $table->string('customer_phone')->nullable();
-
-            //payment method is either cash or credit
-            $table->string('payment_method')->default('cash');
-            $table->string('payment_status')->default('paid');
-
-            //payment details
-            $table->date('payment_date')->nullable();
             $table->string('status');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->unsignedBigInteger('created_by')->nullable();

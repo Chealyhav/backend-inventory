@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('sale_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('sale_id')->constrained()->onDelete('cascade');
+            $table->string('customer_name')->nullable();
+            $table->string('customer_address')->nullable();
+            $table->string('customer_phone')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
             $table->timestamps();
         });
     }

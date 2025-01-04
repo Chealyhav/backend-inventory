@@ -23,7 +23,8 @@ return new class extends Migration
             $table->decimal('buy_price', 10, 2)->nullable();  // Correct for monetary values
             $table->unsignedBigInteger('product_id'); // Use unsignedBigInteger for foreign key
             $table->unsignedBigInteger('color_id'); // Use unsignedBigInteger for foreign key
-
+            $table->string('status')->default('active');
+            $table->decimal('discount', 10, 2)->default(0);
             // Foreign key constraints
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');
