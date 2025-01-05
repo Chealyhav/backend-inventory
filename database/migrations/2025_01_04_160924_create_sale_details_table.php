@@ -17,10 +17,22 @@ return new class extends Migration
             $table->string('customer_name')->nullable();
             $table->string('customer_address')->nullable();
             $table->string('customer_phone')->nullable();
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->decimal('subtotal', 10, 2)->default(0);
+            $table->decimal('total_amount', 10, 2)->default(0);
+            $table->string('sale_type')->default('finished_goods');
+            $table->string('sale_status')->default('pending');
+            $table->date('delivery_date')->nullable();
+            $table->date('sale_date');
+
+
+            $table->boolean('status')->default('1');
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
+            $table->unsignedBigInteger('created_by')->nullable();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null'); // Only this line
+            $table->softDeletes();
             $table->timestamps();
         });
     }

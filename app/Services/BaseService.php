@@ -13,10 +13,11 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 
 
-abstract class BaseService {
+abstract class BaseService
+{
     protected function getLimit(Builder $query, int $limit)
     {
-        return isset($limit) && $limit !=-1 ? $query->paginate($limit) : $query->get();
+        return isset($limit) && $limit != -1 ? $query->paginate($limit) : $query->get();
     }
 
     public function create(array $params = array())
@@ -27,31 +28,30 @@ abstract class BaseService {
         //   $params['global_id'] = Str::uuid()->toString();
         // personal information
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->create($params);
             return $data;
         } else {
             throw new Exception('Query not found');
         }
-
     }
 
-   //  public function generateUuid()
-   //  {
-   //      return \Ramsey\Uuid\Uuid::uuid4()->toString();
-   //  }
+    //  public function generateUuid()
+    //  {
+    //      return \Ramsey\Uuid\Uuid::uuid4()->toString();
+    //  }
 
     public function update(array $params = array(), String $id = null)
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('global_id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 $data->update($params);
                 return $data;
             } else {
-                throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
+                throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
             throw new Exception('Query not found');
@@ -62,9 +62,9 @@ abstract class BaseService {
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('global_id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 $data->delete();
                 return $data;
             } else {
@@ -79,12 +79,12 @@ abstract class BaseService {
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('global_id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 return $data;
             } else {
-                throw new Exception("Record ".$id." not found in ".$query->getModel()::class ?? ''."");
+                throw new Exception("Record " . $id . " not found in " . $query->getModel()::class ?? '' . "");
             }
         } else {
             throw new Exception('Query not found');
@@ -106,7 +106,11 @@ abstract class BaseService {
         $offset = ($page - 1) * $limit;
 
         // Order by created_at desc by default
-        $query = $query->orderBy('created_at', $orderBy);
+        if (isset($query)) {
+            $query = $query->orderBy('created_at', $orderBy);
+        } else {
+            throw new Exception('Query not found');
+        }
 
         if (isset($search)) {
             $query = $query->where($columns, 'like', '%' . $search . '%');
@@ -132,7 +136,8 @@ abstract class BaseService {
     }
 
     // Get id by role
-    public function getRoleId(String $roleType) {
+    public function getRoleId(String $roleType)
+    {
         $role = Role::where('role', $roleType)->first();
         $roleId = $role ? $role->id : null;
 
@@ -140,23 +145,24 @@ abstract class BaseService {
     }
 
     // Get id by global_id
-    public function getIdByGlobalId($modelName, $global_id) {
+    public function getIdByGlobalId($modelName, $global_id)
+    {
         $model = new $modelName();
         $query = $model->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('global_id', $global_id)->first();
 
             $dataId = $data ? $data->id : null;
             return $dataId;
-        }
-        else {
+        } else {
             throw new Exception('Query not found');
         }
     }
 
     // Activate and Deactivate a record
-    public function activate($global_id, bool $status) {
+    public function activate($global_id, bool $status)
+    {
         $query = $this->getQuery();
 
         if (isset($query)) {
@@ -165,43 +171,11 @@ abstract class BaseService {
                 'active' => $status
             ]);
             return $data;
-        }
-        else {
+        } else {
             return throw new ModelNotFoundException('Query not found.');
         }
     }
 
-    public function checkUserSubscription($userId)
-    {
-        $userSubscription = Subscription::where('user_id', $userId)
-                                        ->where('active', true)
-                                        ->orderBy('created_at', 'desc')
-                                        ->first();
-        (bool)$result =  false;
-        if (isset($userSubscription)) {
-            $expiredDate = $userSubscription->expired_date;
-            $currentDate = now();
-            if ($currentDate <= $expiredDate) {
-                $result = true;
-            }
-            return $result;
-        } else {
-            return $result;
-        }
-    }
-
-    public function checkUserEnrollmentOnCourse($userId, $courseId) {
-        $userEnrollment = Enrollment::where('user_id', $userId)
-                                    ->where('course_id', $courseId)
-                                    ->orderBy('created_at', 'desc')
-                                    ->first();
-
-        (bool)$result =  false;
-        if (isset($userEnrollment)) {
-            $result = true;
-        }
-        return $result;
-    }
 
 
     protected function getQuery()

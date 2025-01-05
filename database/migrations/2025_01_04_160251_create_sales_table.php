@@ -17,18 +17,18 @@ return new class extends Migration
             $table->integer('quantity');
             $table->float('price')->default(0);
             $table->decimal('total_price', 10, 2)->default(0);
-            $table->decimal('subtotal', 10, 2)->default(0);
-            $table->decimal('total_amount', 10, 2)->default(0);
-            $table->string('sale_type')->default('finished_goods');
-            $table->string('sale_status')->default('pending');
-            $table->date('delivery_date')->nullable();
             $table->date('sale_date');
-            $table->string('status');
+            $table->foreignId('subproduct_id')->constrained()->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+
+            $table->boolean('status')->default('1');
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
+            $table->unsignedBigInteger('created_by')->nullable();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null'); // Only this line
+            $table->softDeletes();
             $table->timestamps();
 
         });

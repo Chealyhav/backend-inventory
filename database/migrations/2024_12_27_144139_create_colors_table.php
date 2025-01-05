@@ -16,11 +16,14 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('code')-> unique();
 
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->boolean('status')->default('1');
+            $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
-            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
-            
+            $table->unsignedBigInteger('created_by')->nullable();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null'); // Only this line
+            $table->softDeletes();
             $table->timestamps();
         });
     }
