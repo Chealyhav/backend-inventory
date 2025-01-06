@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\v1;
 use App\Services\StockSv;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\v1\BaseAPI;
+use App\Models\Stock;
 
 class StockController extends BaseAPI
 {
@@ -13,6 +14,22 @@ class StockController extends BaseAPI
     {
         $this->stockService = new StockSv();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function index(Request $request)
     {
@@ -34,16 +51,20 @@ class StockController extends BaseAPI
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
-    public function subtractStock($stock, Request $request)
+    public function subtractStock( Request $request)
     {
         try {
+
             $params = $request->all();
-            $stock = $this->stockService->decrementStock($stock, $params);
-            return $this->successResponse($stock, 'Stock created successfully.');
+            // Decrement the stock using the service
+            $updatedStock = $this->stockService->decrementStock( $params);
+
+            return $this->successResponse($updatedStock, 'Stock updated successfully.');
         } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), $e->getCode());
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
+
 
 
 

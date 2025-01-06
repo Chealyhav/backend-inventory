@@ -109,4 +109,6 @@ class ProductController extends BaseAPI
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
+   
+
 }

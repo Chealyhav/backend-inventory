@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Stock;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class StockSv extends BaseService
 {
@@ -23,47 +24,87 @@ class StockSv extends BaseService
     public function incrementStock(array $params)
     {
         try {
-            // Ensure required parameters are present
+            // Ensure required fields are provided
             if (!isset($params['subproduct_id']) || !isset($params['stock_in'])) {
                 throw new Exception('Missing required fields for stock entry.');
             }
 
-            // Set stock_out to 0 if it's not provided in the request
-            $params['stock_out'] = $params['stock_out'] ?? 0;  // Use the null coalescing operator to set a default value if not provided
+            // Default for stock_out if not set, and default stock_date if not set
+            $params['stock_out'] = $params['stock_out'] ?? 0;
+            $params['stock_date'] = $params['stock_date'] ?? now()->toDateString();
 
-            // Set stock_date to today's date if not provided
-            if (!isset($params['stock_date'])) {
-                $params['stock_date'] = now()->toDateString(); // Or use Carbon::now()->toDateString()
-            }
-
-            // Calculate stock value
+            // Calculate stock
             $params['stock'] = $params['stock_in'] - $params['stock_out'];
 
-            // Create new stock record
+            // Create a new stock entry
             $stock = $this->getQuery()->create($params);
+
+            // Update the subproduct's current stock and stockin using a raw SQL query and count auto
+            DB::table('subproducts')
+                ->where('id', $params['subproduct_id'])
+                ->update(['currentStock' => DB::raw('currentStock + ' . $params['stock_in']), 'stockin' => DB::raw('stockin + ' . $params['stock_in'])]);
             return $stock;
         } catch (Exception $e) {
             throw new Exception('Error creating stock entry: ' . $e->getMessage());
         }
     }
-
 
     //sell the stock - stock will be updated
-    public function decrementStock(Stock $stock, array $params)
+    public function decrementStock(array $params)
     {
         try {
-            // Ensure required parameters are present
-            if (!isset($params['stock_out'])) {
+            // Ensure required parameters are provided
+            if (!isset($params['subproduct_id']) || !isset($params['stock_out'])) {
                 throw new Exception('Missing required fields for stock entry.');
             }
-            // Calculate stock value
-            $params['stock'] = $params['stock_in'] - $params['stock_out'];
-            $stock->update($params);
-            return $stock;
+
+            // Fetch the current stock for the given subproduct_id
+            $currentStock = $this->getQuery()->where('subproduct_id', $params['subproduct_id'])->first();
+
+            if (!$currentStock) {
+                throw new ModelNotFoundException('Stock not found.');
+            }
+
+            // Calculate remaining stock after decrement
+            $newStock = $currentStock->currentStock - $params['stock_out'];
+
+            // Update the stock entry for the given subproduct
+            $currentStock->update([
+                'stock_out' => $currentStock->stock_out + $params['stock_out'],
+                'currentStock' => $newStock,
+            ]);
+
+            // Update the subproduct's stock
+            DB::table('subproducts')
+                ->where('id', $params['subproduct_id'])
+                ->update([
+                    'currentStock' => DB::raw('currentStock - ' . $params['stock_out']),
+                    'stockOut' => DB::raw('stockOut + ' . $params['stock_out']),
+                ]);
+            return $currentStock;
         } catch (Exception $e) {
-            throw new Exception('Error creating stock entry: ' . $e->getMessage());
+            throw new Exception('Error decrementing stock: ' . $e->getMessage());
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
 
     /**
      * Get all stock records

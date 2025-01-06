@@ -19,16 +19,21 @@ return new class extends Migration
             $table->float('length')->nullable();
             $table->float('unit_weight')->nullable();
             $table->float('total_weight')->nullable();
-            $table->decimal('sale_price', 10, 2)->nullable(); // Correct for monetary values
-            $table->decimal('buy_price', 10, 2)->nullable();  // Correct for monetary values
-            $table->unsignedBigInteger('product_id'); // Use unsignedBigInteger for foreign key
-            $table->unsignedBigInteger('color_id'); // Use unsignedBigInteger for foreign key
+            $table->decimal('sale_price', 10, 2)->nullable();
+            $table->decimal('buy_price', 10, 2)->nullable();
+            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('color_id');
             $table->decimal('discount', 10, 2)->default(0);
+            $table->decimal('currentStock')->default(0);
+            $table->decimal('stockOut')->default(0);
+            $table->decimal('stockIn')->default(0);
+
             // Foreign key constraints
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');
 
             $table->boolean('status')->default('1');
+            $table->boolean('remark')->default('1');
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

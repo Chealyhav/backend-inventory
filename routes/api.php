@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\v1\ColorController;
 use App\Http\Controllers\API\v1\ProductController;
 use App\Http\Controllers\API\v1\CategoryController;
+use App\Http\Controllers\Api\v1\ProductDetailController;
 use App\Http\Controllers\API\v1\SubCategoryController;
 use App\Http\Controllers\API\v1\SubProductController;
 use App\Http\Controllers\API\v1\SaleController;
@@ -66,7 +67,11 @@ Route::put('/stocks/{id}', [StockController::class, 'update']);
 Route::delete('/stocks/{id}', [StockController::class, 'destroy']);
 
 Route::post('/add_stocks', [StockController::class, 'addStock']);
-Route::post('/stocks/{stock}/subtract', [StockController::class, 'subtractStock']);
+Route::post('/subtract_stocks', [StockController::class, 'subtractStock']);
+
+
+Route::get('/get_aluminum', [ProductDetailController::class,'getAluminum']);
+Route::get('/get_accessories', [ProductDetailController::class,'getAccessories']);
 
 
 
