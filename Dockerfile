@@ -1,45 +1,38 @@
-# Use the official PHP image as the base image
-FROM php:8.2-fpm
+# Use official PHP 8.2 image with Apache
+FROM php:8.2-apache
 
-# Install system dependencies and PHP extensions
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    zip \
-    git \
     libzip-dev \
-    libpng-dev \
-    libicu-dev \
-    libssl-dev \
-    libpq-dev && \  # Add PostgreSQL client libraries
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd zip pdo pdo_mysql intl pdo_pgsql && \  # Install PDO_PGSQL extension
-    pecl install redis && \
-    docker-php-ext-enable redis
+    unzip \
+    git \
+    libcurl4-openssl-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip pdo pdo_pgsql
 
-# Install Composer (PHP dependency manager)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# Set the working directory inside the container
-WORKDIR /var/www
+# Set working directory
+WORKDIR /var/www/html
 
-# Copy the existing Laravel project files into the container
+# Copy the current directory content to the container
 COPY . .
 
-# Install PHP dependencies using Composer
-RUN composer install --no-dev --optimize-autoloader
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copy the example environment configuration and set the correct permissions
-RUN cp .env.example .env && \
-    chown -R www-data:www-data /var/www && \
-    chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Install project dependencies
+RUN composer install --no-scripts --no-autoloader
 
-# Generate Laravel application key
-RUN php artisan key:generate
+# Set the correct permissions for the storage and cache directories
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose the application port (typically 80 or 8000)
+# Expose the port the app will run on
 EXPOSE 80
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Start Apache in the foreground
+CMD ["apache2-foreground"]
