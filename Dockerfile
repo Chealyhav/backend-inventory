@@ -2,9 +2,19 @@
 FROM php:8.2-fpm
 
 # Install system dependencies and PHP extensions
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip git libzip-dev libpng-dev libicu-dev libssl-dev && \
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zip \
+    git \
+    libzip-dev \
+    libpng-dev \
+    libicu-dev \
+    libssl-dev \
+    libpq-dev && \  # Add PostgreSQL client libraries
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd zip pdo pdo_mysql intl && \
+    docker-php-ext-install gd zip pdo pdo_mysql intl pdo_pgsql && \  # Install PDO_PGSQL extension
     pecl install redis && \
     docker-php-ext-enable redis
 
