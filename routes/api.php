@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\v1\TelegramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\v1\ColorController;
@@ -73,6 +74,8 @@ Route::post('/subtract_stocks', [StockController::class, 'subtractStock']);
 
 Route::get('/get_aluminum', [ProductDetailController::class,'getAluminum']);
 Route::get('/get_accessories', [ProductDetailController::class,'getAccessories']);
+
+Route::post('/telegram_bot', [TelegramController::class,'index']);
 
 
 
