@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\Models\Product;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProductSV extends BaseService
 {
@@ -135,13 +138,13 @@ class ProductSV extends BaseService
     public function createProduct(array $params)
     {
         $params['status'] = $params['status'] ?? 1;
-        $product = $this->getQuery()->create($params);
 
-        if (!$product) {
-            throw new Exception('Product creation failed.');
+        try{
+            $product = $this->create($params);
+            return $product;
+        } catch (Exception $e) {
+            throw new HttpException(500, $e->getMessage());
         }
-
-        return $product;
     }
 
     // Update a product

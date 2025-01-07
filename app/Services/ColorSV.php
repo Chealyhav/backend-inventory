@@ -45,8 +45,8 @@ class ColorSV extends BaseService
             $data = $query->create(
                 [
                     'name' => $params['name'],
-                    'code' => $params['code'],
-                    'created_by' => Auth::user()->id,
+                    'code' => $params['code'] ?? null,
+                    // 'created_by' => Auth::user()->id,
 
                 ]
             );

@@ -46,7 +46,7 @@ class ProductController extends BaseAPI
     /**
      * Create a new product.
      */
-    public function store(ProductsRequest $request)
+    public function store(request $request)
     {
         try {
             $params = $request->all();
@@ -109,6 +109,6 @@ class ProductController extends BaseAPI
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
-   
+
 
 }

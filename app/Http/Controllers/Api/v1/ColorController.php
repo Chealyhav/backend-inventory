@@ -30,7 +30,7 @@ class ColorController extends BaseAPI
     }
 
     // Create a new color
-    public function store(StoreColorRequest $request)
+    public function store(request $request)
     {
         try {
             $param['name'] = $request->input('name');
@@ -44,7 +44,7 @@ class ColorController extends BaseAPI
         }
     }
 
-    public function update($id, UpdateColorRequest $request)
+    public function update($id, request $request)
     {
         try {
             $param['name'] = $request->input('name');
