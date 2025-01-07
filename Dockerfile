@@ -1,7 +1,7 @@
 FROM php:8.2-apache
 
 # Install system dependencies
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -9,6 +9,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     unzip \
     git \
     libcurl4-openssl-dev \
+    libxpm-dev \
+    libfreetype6 \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/freetype2 --with-jpeg-dir=/usr/include \
     && docker-php-ext-install gd zip pdo pdo_pgsql
 
