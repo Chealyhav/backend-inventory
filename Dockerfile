@@ -1,8 +1,7 @@
-# Use official PHP 8.2 image with Apache
 FROM php:8.2-apache
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -10,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     libcurl4-openssl-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/freetype2 --with-jpeg-dir=/usr/include \
     && docker-php-ext-install gd zip pdo pdo_pgsql
 
 # Enable Apache mod_rewrite
