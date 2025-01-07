@@ -1,39 +1,27 @@
-FROM php:8.2-apache
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    unzip \
-    git \
-    libcurl4-openssl-dev \
-    libxpm-dev \
-    libfreetype6 \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/freetype2 --with-jpeg-dir=/usr/include \
-    && docker-php-ext-install gd zip pdo pdo_pgsql
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Use the official PHP image with Laravel dependencies
+FROM php:8.2-fpm
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Copy the current directory content to the container
-COPY . .
+# Install system dependencies
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev git unzip libpq-dev && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install gd pdo pdo_pgsql
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install project dependencies
-RUN composer install --no-scripts --no-autoloader
+# Copy the Laravel project files into the container
+COPY . .
 
-# Set the correct permissions for the storage and cache directories
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Install PHP dependencies with Composer
+RUN composer install --no-interaction --optimize-autoloader
 
-# Expose the port the app will run on
-EXPOSE 80
+# Expose port
+EXPOSE 9000
 
-# Start Apache in the foreground
-CMD ["apache2-foreground"]
+# Command to run the PHP-FPM server
+CMD ["php-fpm"]
