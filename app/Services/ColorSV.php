@@ -44,7 +44,7 @@ class ColorSV extends BaseService
         if(isset($query)){
             $data = $query->create(
                 [
-                    'name' => $params['name'],
+                    'name' => $params['name'] ?? null,
                     'code' => $params['code'] ?? null,
                     // 'created_by' => Auth::user()->id,
 
@@ -65,9 +65,9 @@ class ColorSV extends BaseService
             if(isset($data)){
                 $data->update(
                     [
-                        'name' => $params['name'],
-                        'code' => $params['code'],
-                        'updated_by' => Auth::user()->id,
+                        'name' => $params['name']?? null,
+                        'code' => $params['code'] ?? null,
+                        'updated_by' => Auth::user()->id ?? null,
                     ]
                 );
                 return $data;

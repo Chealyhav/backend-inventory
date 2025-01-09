@@ -47,11 +47,8 @@ class ColorController extends BaseAPI
     public function update($id, request $request)
     {
         try {
-            $param['name'] = $request->input('name');
-            $param['code'] = $request->input('code');
-            $param['updated_by'] = $request->input('updated_by');
-
-            $color = $this->colorSV->ColorUpdate($id, $param);
+            $params = $request->all();
+            $color = $this->colorSV->ColorUpdate($id, $params);
 
             return $this->sendResponse($color, 'Color updated successfully.');
         } catch (\Exception $e) {
