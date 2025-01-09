@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name',255)->unique();
-
-            $table->boolean('status')->default('1');
+            $table->string('description',255)->nullable();
+            $table->boolean('status')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

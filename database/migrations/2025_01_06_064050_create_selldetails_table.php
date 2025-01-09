@@ -17,12 +17,12 @@ return new class extends Migration
             $table->integer('total_stockin')->default(0); // Total stock in for the sale
             $table->integer('total_stockout')->default(0); // Total stock out for the sale
             $table->integer('current_stock')->default(0); // Current stock after transaction
-            $table->date('sell_date'); // Date of the sale
+            $table->date('sell_date')->nullable(); // Date of the sale
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
-
+            $table->boolean('status')->default(1);
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null');

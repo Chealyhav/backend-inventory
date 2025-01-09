@@ -32,8 +32,8 @@ return new class extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');
 
-            $table->boolean('status')->default('1');
-            $table->boolean('remark')->default('1');
+            $table->boolean('status')->default(1);
+            $table->boolean('remark')->default(1); // 1 = PreOrder, 2 = InStock
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

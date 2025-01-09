@@ -21,7 +21,7 @@ return new class extends Migration
             $table->double('availableStock')->default(0.0);
             $table->string('stockType')->nullable();
 
-            $table->boolean('status')->default('1');
+            $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

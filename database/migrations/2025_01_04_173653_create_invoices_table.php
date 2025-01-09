@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('payment_method')->default('cash');
             $table->string('notes')->nullable();
             // User tracking
-            $table->boolean('status')->default('1');
+            $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

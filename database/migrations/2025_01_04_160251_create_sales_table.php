@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('subproduct_id')->constrained()->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
-            $table->boolean('status')->default('1');
+            $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

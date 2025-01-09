@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('sale_type')->default('finished_goods');
             $table->string('sale_status')->default('pending');
             $table->date('delivery_date')->nullable();
-            $table->date('sale_date');
+            $table->date('sale_date')->nullable();
 
 
-            $table->boolean('status')->default('1');
+            $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

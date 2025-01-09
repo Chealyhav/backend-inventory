@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('SN')->unique();
             $table->foreignId('category_id')->constrained('categories');
 
-            $table->boolean('status')->default('1');
+            $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
