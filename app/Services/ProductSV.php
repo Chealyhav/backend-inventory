@@ -106,8 +106,10 @@ class ProductSV extends BaseService
     // Get product by ID
     public function getProductById($id)
     {
-        $product = $this->getQuery()->
-            join('sub_category', 'sub_category.id', '=', 'products.sub_category_id')
+        if (empty($id)) {
+            throw new Exception('Product ID is required.');
+        }
+        $product = $this->getQuery()->join('sub_category', 'sub_category.id', '=', 'products.sub_category_id')
             ->select(
                 'products.id',
                 'products.product_name',
@@ -138,8 +140,10 @@ class ProductSV extends BaseService
     public function createProduct(array $params)
     {
         $params['status'] = $params['status'] ?? 1;
-
-        try{
+        if (!isset($params['sub_category_id'])) {
+            throw new Exception('Subcategory ID is required.');
+        }
+        try {
             $product = $this->create($params);
             return $product;
         } catch (Exception $e) {
@@ -150,6 +154,9 @@ class ProductSV extends BaseService
     // Update a product
     public function updateProduct($id, array $params)
     {
+        if (empty($id)) {
+            throw new Exception('Product ID is required.');
+        }
         $product = $this->getQuery()->find($id);
 
         if (!$product) {
@@ -164,6 +171,9 @@ class ProductSV extends BaseService
     // Soft delete a product
     public function deleteProduct($id)
     {
+        if (empty($id)) {
+            throw new Exception('Product ID is required.');
+        }
         $product = $this->getQuery()->find($id);
 
         if (!$product) {
@@ -178,6 +188,9 @@ class ProductSV extends BaseService
     // Restore a soft-deleted product
     public function restoreProduct($id)
     {
+        if (empty($id)) {
+            throw new Exception('Product ID is required.');
+        }
         $product = $this->getQuery()->withTrashed()->find($id);
 
         if (!$product) {
@@ -192,6 +205,9 @@ class ProductSV extends BaseService
     // Permanently delete a product from the database
     public function deleteProductFromDb($id)
     {
+        if (empty($id)) {
+            throw new Exception('Product ID is required.');
+        }
         $product = $this->getQuery()->withTrashed()->find($id);
 
         if (!$product) {

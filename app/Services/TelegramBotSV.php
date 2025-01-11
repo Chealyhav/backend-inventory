@@ -14,15 +14,7 @@ class TelegramBotSV extends BaseService
         $this->client = new Client();
     }
 
-    /**
-     * Send a notification to Telegram about product actions.
-     *
-     * @param string $action The action performed (sell, add stock, unstock).
-     * @param string $productName The name of the product.
-     * @param int $quantity The quantity affected by the action.
-     * @return array The response from the Telegram API.
-     * @throws Exception If sending the message fails.
-     */
+    // Existing method for sending product action notifications
     public function sendTrackerProduct($params = array())
     {
         try {
@@ -60,14 +52,8 @@ class TelegramBotSV extends BaseService
             throw new Exception('Failed to send tracker product notification: ' . $e->getMessage());
         }
     }
-    /**
-     * Format the message for Telegram.
-     *
-     * @param string $action The action performed.
-     * @param string $productName The name of the product.
-     * @param int $quantity The quantity affected by the action.
-     * @return string The formatted message.
-     */
+
+    // Existing method to format the Telegram message
     protected function formatMessage($action, $productName, $quantity)
     {
         switch ($action) {
@@ -77,6 +63,9 @@ class TelegramBotSV extends BaseService
                 return "<b>Stock Added</b>\nProduct: {$productName}\nQuantity: {$quantity}\nStatus: Stock updated!";
             case 'unstock':
                 return "<b>Stock Removed</b>\nProduct: {$productName}\nQuantity: {$quantity}\nStatus: Stock removed!";
+            case "checkStock":
+                // You may want to return a custom message for stock checks (e.g., low stock)
+                return "⚠️ Low stock alert for SubProduct: {$productName}.\nCurrent stock: {$quantity}.\nPlease pre-order more stock.";
             default:
                 return "<b>Unknown Action</b>\nAction: {$action}\nProduct: {$productName}\nQuantity: {$quantity}";
         }

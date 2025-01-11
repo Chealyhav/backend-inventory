@@ -100,6 +100,10 @@ class SubProductSV extends BaseService
     // Get subproduct by ID
     public function getSubProductById($id)
     {
+        if (empty($id)) {
+            throw new Exception('SubProduct ID is required.');
+        }
+
         $subProduct = $this->getQuery()
             ->where('subproducts.id', $id)
             ->join('products', 'products.id', '=', 'subproducts.product_id')
@@ -127,6 +131,7 @@ class SubProductSV extends BaseService
             )
             ->first();  // Use first() since you're fetching a single record
 
+
         if (!$subProduct) {
             throw new ModelNotFoundException('SubProduct not found.');
         }
@@ -138,6 +143,13 @@ class SubProductSV extends BaseService
     // Create a subproduct
     public function createSubProduct(array $params)
     {
+        if (empty($params['product_id'])) {
+            throw new Exception('Product ID is required.');
+        }
+
+        if (empty($params['color_id'])) {
+            throw new Exception('Color ID is required.');
+        }
         $params['status'] = $params['status'] ?? 1;
         $subProduct = $this->getQuery()->create($params);
 
@@ -151,6 +163,16 @@ class SubProductSV extends BaseService
     // Update a subproduct
     public function updateSubProduct($id, array $params)
     {
+        if (empty($params['product_id'])) {
+            throw new Exception('Product ID is required.');
+        }
+        if (empty($params['color_id'])) {
+            throw new Exception('Color ID is required.');
+        }
+        if (empty($params['id'])) {
+            throw new Exception('SubProduct ID is required.');
+        }
+        $params['status'] = $params['status']?? 1;
         $subProduct = $this->getQuery()->find($id);
 
         if (!$subProduct) {
@@ -165,6 +187,9 @@ class SubProductSV extends BaseService
     // Soft delete a subproduct
     public function deleteSubProduct($id)
     {
+        if (empty($id)) {
+            throw new Exception('SubProduct ID is required.');
+        }
         $subProduct = $this->getQuery()->find($id);
 
         if (!$subProduct) {
@@ -179,6 +204,9 @@ class SubProductSV extends BaseService
     // Restore a soft-deleted subproduct
     public function restoreSubProduct($id)
     {
+        if (empty($id)) {
+            throw new Exception('SubProduct ID is required.');
+        }
         $subProduct = $this->getQuery()->withTrashed()->find($id);
 
         if (!$subProduct) {
@@ -193,6 +221,9 @@ class SubProductSV extends BaseService
     // Permanently delete a subproduct from the database
     public function deleteSubProductFromDb($id)
     {
+        if (empty($id)) {
+            throw new Exception('SubProduct ID is required.');
+        }
         $subProduct = $this->getQuery()->withTrashed()->find($id);
 
         if (!$subProduct) {
@@ -201,4 +232,9 @@ class SubProductSV extends BaseService
 
         return $subProduct->forceDelete();
     }
+
+
+
+
+
 }

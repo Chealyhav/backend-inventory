@@ -61,14 +61,34 @@ class SubcategorySV extends BaseService
     {
         $query = $this->getQuery();
         $query->where('id', $id);
-        $query->with('category');
-        if (isset($query)) {
-            $data = $query->first();
-            return $data;
+
+        $query->with('category'); // Eager load the related category
+
+        // Check if the subcategory exists
+        $data = $query->first();
+
+        if ($data) {
+            // Format the data for the response
+            $result = [
+                'id' => $data->id,
+                'name' => $data->name,
+                'category_id' => $data->category_id,
+                'status' => $data->status,
+                'categoryname' => $data->category ? $data->category->name : null,
+                'created_at' => $data->created_at,
+                'updated_at' => $data->updated_at,
+                'created_by' => $data->created_by,
+                'updated_by' => $data->updated_by,
+                'deleted_at' => $data->deleted_at,
+                'deleted_by' => $data->deleted_by,
+            ];
+
+            return $result;
         } else {
-            throw new Exception('Query not found');
+            throw new Exception('Subcategory not found');
         }
     }
+
     //create subcategory
     public function createSubcategory(array $params = array())
     {

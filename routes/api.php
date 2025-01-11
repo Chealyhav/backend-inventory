@@ -17,6 +17,17 @@ use App\Http\Controllers\API\v1\UserController;
 use App\Http\Controllers\API\v1\RoleController;
 
 
+
+
+
+Route::get('/categories', [CategoryController::class, 'index']); // List all categories
+Route::get('/categories/{id}', [CategoryController::class, 'show']); // Get category by ID
+Route::post('/categories', [CategoryController::class, 'store']); // Create a new category
+Route::put('/categories/{id}', [CategoryController::class, 'update']); // Update a category
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']); // Soft delete a category
+Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']); // Restore a category
+Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']); // Permanently delete a category
+
 Route::get('/colors', [ColorController::class, 'index']);
 Route::post('/colors', [ColorController::class, 'store']);
 Route::get('/colors/{id}', [ColorController::class, 'show']);
