@@ -88,24 +88,6 @@ class StockSv extends BaseService
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
     /**
      * Get all stock records
      *
@@ -193,7 +175,6 @@ class StockSv extends BaseService
 
         return $stock->delete();
     }
-
     /**
      * Restore a soft-deleted stock entry
      *

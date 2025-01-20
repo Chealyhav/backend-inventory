@@ -29,6 +29,7 @@ class ProductDetailController extends BaseAPI
         }
     }
 
+    
     public function getAccessories(Request $request)
     {
         try {
