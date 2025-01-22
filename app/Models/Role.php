@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    protected $fillable = ['name'];
+    protected $table = 'roles';
+    protected $fillable = ['name', 'status'];
 
     // A role can have many users
     public function users()
