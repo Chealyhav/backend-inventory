@@ -57,8 +57,8 @@ class CategoryController extends BaseAPI
     public function store(Request $request)
     {
         try {
-            $data = $request->only(['name', 'status', 'description']);
-            $category = $this->categoryService->createCategory($data);
+            $params = $request->all();
+            $category = $this->categoryService->createCategory($params);
             return $this->sendResponse($category, 'Category created successfully.');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);

@@ -20,8 +20,9 @@ class SubcategorySV extends BaseService
     //get all category
     public function getAllSubcategories($params = [])
     {
+        
         // Build the query
-        $query = $this->getQuery()->with('category')->select('id', 'name', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
+        $query = $this->getQuery()->with('category')->select('id', 'name','SN', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
 
         if (isset($params['search'])) {
             $query->where('name', 'LIKE', '%' . $params['search'] . '%');
@@ -29,6 +30,16 @@ class SubcategorySV extends BaseService
         if (isset($params['page'])) {
             $page = $params['page'];
             $query->offset(($page - 1) * 10)->limit(10);
+        }
+
+        if (isset($params['category_id'])) {
+            $query->where('category_id', $params['category_id']);
+        }
+        if (isset($params['status'])) {
+            $query->where('status', $params['status']);
+        }
+        if (isset($params['orderBy']) && isset($params['order'])) {
+            $query->orderBy($params['orderBy'], $params['order']);
         }
 
         // Execute the query and get the data
@@ -39,6 +50,7 @@ class SubcategorySV extends BaseService
             return [
                 'id' => $subcategory->id,
                 'name' => $subcategory->name,
+                'SN' => $subcategory->SN,
                 'category_id' => $subcategory->category_id,
                 'status' => $subcategory->status,
                 'categoryname' => $subcategory->category ? $subcategory->category->name : null,

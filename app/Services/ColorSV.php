@@ -19,8 +19,13 @@ class ColorSV extends BaseService
         return Color::query();
     }
 
+
+
+
+
     public function ColorList($params = array())
     {
+
         $query = $this->getQuery();
         if(isset($params['search'])){
             $query->where('name', 'LIKE', '%'.$params['search'].'%');
@@ -37,6 +42,7 @@ class ColorSV extends BaseService
             throw new Exception('Query not found');
         }
     }
+
 
     public function ColorCreate(array $params = array())
     {

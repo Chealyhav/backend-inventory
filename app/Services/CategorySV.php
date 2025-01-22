@@ -22,20 +22,13 @@ class CategorySV extends BaseService
     public function getAllCategories($params = [])
     {
         $query = $this->getQuery();
+        $data = $query->get();
 
-        // Apply filters if any
-        if (isset($params['status'])) {
-            $query->where('status', $params['status']);
+        if ($data->isEmpty()) {
+            throw new Exception('No categories found.');
         }
 
-        // Pagination
-        $limit = $params['limit'] ?? 10;
-        $page = $params['page'] ?? 1;
-        $offset = ($page - 1) * $limit;
-
-        $query->skip($offset)->take($limit);
-
-        return $query->get();
+        return $data;
     }
 
     /**
@@ -64,6 +57,9 @@ class CategorySV extends BaseService
      */
     public function createCategory(array $data)
     {
+        if (!isset($data['code']) || empty($data['code'])) {
+            $data['code'] = 'default_code'; // Provide a default value if not supplied
+        }
         return $this->getQuery()->create($data);
     }
 

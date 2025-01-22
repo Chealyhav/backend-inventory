@@ -16,7 +16,14 @@ class Category extends Model
     protected $table = 'categories';
 
     protected $fillable = [
+        'id',
         'name',
+        'SN',
+        'created_by',
+        'description',
+        'input_date',
+        'updated_by',
+        'deleted_at',
 
     ];
 
