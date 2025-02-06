@@ -31,6 +31,7 @@ class SubProductSV extends BaseService
                 'subproducts.sale_price',
                 'subproducts.buy_price',
                 'subproducts.discount',
+                'products.stockType',
                 'subproducts.status',
                 'subproducts.created_at',
                 'subproducts.updated_at',
@@ -51,20 +52,18 @@ class SubProductSV extends BaseService
         }
 
         // Pagination setup
-        $limit = $params['limit'] ?? 10;
-        $page = $params['page'] ?? 1;
-        $offset = ($page - 1) * $limit;
+        // $limit = $params['limit'] ?? 10;
+        // $page = $params['page'] ?? 1;
+        // $offset = ($page - 1) * $limit;
 
         // Apply ordering
-        $orderBy = $params['order_by'] ?? 'subproducts.created_at';
-        $order = $params['order'] ?? 'asc';
-        $query->orderBy($orderBy, $order);
+        // $orderBy = $params['order_by'] ?? 'subproducts.created_at';
+        // $order = $params['order'] ?? 'asc';
+        // $query->orderBy($orderBy, $order);
 
         // Count total records for pagination
         $total = $query->count();
 
-        // Apply pagination (limit and offset)
-        $query->skip($offset)->take($limit);
 
         $result = $query->get();
         if (!$result) {
@@ -82,6 +81,7 @@ class SubProductSV extends BaseService
                 'sale_price' => $subProduct->sale_price,
                 'buy_price' => $subProduct->buy_price,
                 'discount' => $subProduct->discount,
+                'stockType' => $subProduct->stockType,
                 'status' => $subProduct->status,
                 'created_at' => $subProduct->created_at,
                 'updated_at' => $subProduct->updated_at,

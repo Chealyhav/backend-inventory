@@ -6,13 +6,26 @@ use App\Models\Stock;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use App\Services\TelegramBotSV;  // Import the TelegramBotSV service
 
 class StockSv extends BaseService
 {
+
+    // protected $telegramBot;
+
+    // // Inject the TelegramBotSV service
+    // public function __construct(TelegramBotSV $telegramBot)
+    // {
+    //     $this->telegramBot = $telegramBot;
+    // }
+
     public function getQuery()
     {
         return Stock::query();
     }
+
+
+
 
     /**
      * Create a stock entry
@@ -43,7 +56,15 @@ class StockSv extends BaseService
             DB::table('subproducts')
                 ->where('id', $params['subproduct_id'])
                 ->update(['currentStock' => DB::raw('currentStock + ' . $params['stock_in']), 'stockin' => DB::raw('stockin + ' . $params['stock_in'])]);
-            return $stock;
+                // Send a Telegram message
+
+                // $this->telegramBot->sendTrackerProduct([
+
+                // ]);
+                // Return the created stock entry
+
+
+                return $stock;
         } catch (Exception $e) {
             throw new Exception('Error creating stock entry: ' . $e->getMessage());
         }
@@ -81,29 +102,13 @@ class StockSv extends BaseService
                     'currentStock' => DB::raw('currentStock - ' . $params['stock_out']),
                     'stockOut' => DB::raw('stockOut + ' . $params['stock_out']),
                 ]);
+
+
             return $currentStock;
         } catch (Exception $e) {
             throw new Exception('Error decrementing stock: ' . $e->getMessage());
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
 
 
     /**

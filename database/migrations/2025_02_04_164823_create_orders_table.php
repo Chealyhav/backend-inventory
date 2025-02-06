@@ -11,21 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name');
-            $table->string('product_code')->unique();
-            $table->string('img_url')->nullable();
-            $table->foreignId('sub_category_id')->constrained('sub_category');
-            $table->double('availableStock')->default(0.0);
-            $table->string('stockType')->nullable();
-
-            $table->boolean('status')->default(1);
-            $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->integer('customer_id')->nullable();
+            $table->enum('sale_type', ['Finished Good', 'Material']);
+            $table->decimal('total_price', 10, 2);
+            $table->date('order_date')->useCurrent();
             $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->boolean('status')->default(1);
+
+
 
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('orders');
     }
 };

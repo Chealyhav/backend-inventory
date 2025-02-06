@@ -1,13 +1,6 @@
 <?php
 
 namespace App\Services;
-
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class ProductDetailSV  extends  BaseService
@@ -18,7 +11,7 @@ class ProductDetailSV  extends  BaseService
     //get all products by category
     public function getAllAluminumProductsByCategory(array $params)
     {
-        $categoryId = $params['category'] ?? 1;
+        $categoryId = $params['category'] ?? 4;
         $subcategoryId = $params['subcategory'] ?? null;
 
         // Start the query to get products based on category
@@ -137,7 +130,7 @@ class ProductDetailSV  extends  BaseService
 
     public function getAccessoriesProductsByCategory(array $params)
     {
-        $categoryId = $params['category'] ?? 2;
+        $categoryId = $params['category'] ?? 5;
         $subcategoryId = $params['subcategory'] ?? null;
 
         // Start the query to get products based on category

@@ -30,6 +30,9 @@ class SubcategorySV extends BaseService
             $page = $params['page'];
             $query->offset(($page - 1) * 10)->limit(10);
         }
+        if (isset($params['category_id'])) {
+            $query->where('category_id', $params['category_id']);
+        }
 
         // Execute the query and get the data
         $data = $query->get();

@@ -21,6 +21,7 @@ class ProductSV extends BaseService
     {
         $query = $this->getQuery()
             ->join('sub_category', 'sub_category.id', '=', 'products.sub_category_id')
+            ->join('categories', 'categories.id', '=', 'sub_category.category_id')
             ->select(
                 'products.id',
                 'products.product_name',
@@ -36,7 +37,8 @@ class ProductSV extends BaseService
                 'products.updated_by',
                 'products.deleted_at',
                 'products.deleted_by',
-                'sub_category.name as sub_category_name'
+                'sub_category.name as sub_category_name',
+                'categories.name as category_name'
             );
 
         // Filter by search term
@@ -45,20 +47,15 @@ class ProductSV extends BaseService
                 ->orWhere('product_code', 'LIKE', '%' . $params['search'] . '%');
         }
 
-        // Pagination
-
-
         if (isset($params['order_by'])) {
             $orderBy = $params['order_by'];
             $order = $params['order'] ?? 'asc';
             $query->orderBy($orderBy, $order);
         }
 
-        // Apply custom filters if provided
-        if (isset($params['filter_by'])) {
-            foreach ($params['filter_by'] as $column => $value) {
-                $query->where($column, $value);
-            }
+        // Apply custom filters if provided such as category_id, status, etc.
+        if (isset($params['sub_category_id'])) {
+            $query->where('sub_category_id', $params['sub_category_id']);
         }
 
         // Pagination setup
@@ -77,6 +74,10 @@ class ProductSV extends BaseService
         // Apply pagination (limit and offset)
         $query->skip($offset)->take($limit);
 
+        //total page
+        $totalPage = ceil($total / $limit);
+        $nextPage = $page + 1 ;
+        $prevPage = $page - 1;
 
         $result = $query->get();
         $data = $result->map(function ($product) {
@@ -96,10 +97,21 @@ class ProductSV extends BaseService
                 'deleted_at' => $product->deleted_at,
                 'deleted_by' => $product->deleted_by,
                 'sub_category_name' => $product->sub_category_name,
+                'category_name' => $product->category_name,
             ];
         });
 
-        return $data;
+        return [
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'nextPage' => $nextPage,
+            'prevPage' => $prevPage,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'data' => $data,
+
+
+        ];
     }
 
 

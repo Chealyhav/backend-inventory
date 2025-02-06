@@ -11,25 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stockdetails', function (Blueprint $table) {
+        Schema::create('sale_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade'); // Link to stock
-            $table->integer('total_stockin')->default(0); // Total stock in for the sale
-            $table->integer('total_stockout')->default(0); // Total stock out for the sale
-            $table->integer('current_stock')->default(0); // Current stock after transaction
-            $table->date('sell_date')->nullable(); // Date of the sale
+            $table->integer('product_id');
+            $table->integer('sale_id');
+            $table->integer('subproduct_id');
+            $table->integer('quantity');
+            $table->decimal('price', 10, 2);
+            $table->decimal('total_price', 10, 2);
+
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
+
             $table->boolean('status')->default(1);
-            
+
+
+
+
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null');
-
             $table->softDeletes(); // Soft delete column
-
             $table->timestamps();
         });
     }
@@ -39,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stockdetails');
+        Schema::dropIfExists('sale_items');
     }
 };

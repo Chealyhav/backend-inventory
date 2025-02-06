@@ -63,13 +63,7 @@ class ColorSV extends BaseService
         if(isset($query)){
             $data = $query->where('id', $id)->first();
             if(isset($data)){
-                $data->update(
-                    [
-                        'name' => $params['name'],
-                        'code' => $params['code'],
-                        'updated_by' => Auth::user()->id,
-                    ]
-                );
+                $data->update($params);
                 return $data;
             } else {
                 throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
