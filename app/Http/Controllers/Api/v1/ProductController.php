@@ -11,9 +11,9 @@ class ProductController extends BaseAPI
 {
     protected $productSV;
 
-    public function __construct()
+    public function __construct(ProductSV $productSV)
     {
-        $this->productSV = new ProductSV();
+        $this->productSV = $productSV;
     }
 
     /**

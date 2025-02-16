@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\DB;
 class ProductDetailSV  extends  BaseService
 {
 
-
-
     //get all products by category
     public function getAllAluminumProductsByCategory(array $params)
     {

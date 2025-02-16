@@ -15,6 +15,34 @@ use App\Http\Controllers\API\v1\StockController;
 use App\Http\Controllers\API\v1\SubscriptionDetailController;
 use App\Http\Controllers\API\v1\UserController;
 use App\Http\Controllers\API\v1\RoleController;
+use App\Http\Controllers\Api\v1\CloudinaryController;
+
+
+
+//middleware('auth:api')
+
+// Route::middleware('auth:api' v1)->get('/user', function (Request $request) {
+
+// });
+
+//   // Create a new sale
+//   Route::post('/sales', [SaleController::class, 'store']);
+//   // Add items to an existing sale
+//   Route::post('/sales/{sale_id}/items', [SaleController::class, 'storeItems']);
+//   // Process payment for a sale
+//   Route::post('/sales/{sale_id}/payment', [SaleController::class, 'processPayment']);
+
+Route::post('/transaction', [SaleController::class, 'saleTransaction']); // Sale transaction
+Route::post('/sales', [SaleController::class, 'store']); // Create a sale
+Route::post('/add-items', [SaleController::class, 'storeItems']); // Store sale items
+
+Route::post('/process-payment', [SaleController::class, 'processPayment']); // Process payment
+
+
+Route::post('/upload', [CloudinaryController::class, 'uploadImage']);
+Route::delete('/delete', [CloudinaryController::class, 'deleteImage']);
+Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
+
 
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
@@ -28,12 +56,12 @@ Route::post('/colors', [ColorController::class, 'store']);
 Route::get('/colors/{id}', [ColorController::class, 'show']);
 Route::put('/colors/{id}', [ColorController::class, 'update']);
 Route::delete('/colors/{id}', [ColorController::class, 'destroy']);
-Route::delete('colors/{id}/restore', [ColorController::class,'restore']);
+Route::delete('colors/{id}/restore', [ColorController::class, 'restore']);
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/products', [ProductController::class, 'store']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
-Route::put('/products/{id}', [ProductController::class, 'update']);
+Route::post('/products/{id}', [ProductController::class, 'update']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
 
@@ -63,10 +91,10 @@ Route::put('/sales/{id}', [SaleController::class, 'update']);
 Route::delete('/sales/{id}', [SaleController::class, 'destroy']);
 
 Route::get('/sale_details', [SaleDetailController::class, 'index']);
-Route::post('/sale_details', [SaleDetailController::class,'store']);
-Route::get('/sale_details/{id}', [SaleDetailController::class,'show']);
-Route::put('/sale_details/{id}', [SaleDetailController::class,'update']);
-Route::delete('/sale_details/{id}', [SaleDetailController::class,'destroy']);
+Route::post('/sale_details', [SaleDetailController::class, 'store']);
+Route::get('/sale_details/{id}', [SaleDetailController::class, 'show']);
+Route::put('/sale_details/{id}', [SaleDetailController::class, 'update']);
+Route::delete('/sale_details/{id}', [SaleDetailController::class, 'destroy']);
 
 Route::get('/stocks', [StockController::class, 'index']);
 
@@ -78,10 +106,7 @@ Route::post('/add_stocks', [StockController::class, 'addStock']);
 Route::post('/subtract_stocks', [StockController::class, 'subtractStock']);
 
 
-Route::get('/get_aluminum', [ProductDetailController::class,'getAluminum']);
-Route::get('/get_accessories', [ProductDetailController::class,'getAccessories']);
+Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
+Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
 
-Route::post('/telegram_bot', [TelegramController::class,'index']);
-
-
-
+Route::post('/telegram_bot', [TelegramController::class, 'index']);

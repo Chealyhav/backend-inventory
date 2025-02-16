@@ -20,6 +20,9 @@ class SubProductSV extends BaseService
         $query = $this->getQuery()
             ->join('products', 'products.id', '=', 'subproducts.product_id')
             ->join('colors', 'colors.id', '=', 'subproducts.color_id')
+            //categories.where('categories.id', $params['category_id'])
+            ->leftJoin('sub_category', 'sub_category.id', '=', 'products.sub_category_id')
+            ->leftJoin('categories', 'categories.id', '=', 'sub_category.category_id')
             ->select(
                 'subproducts.id',
                 'subproducts.code',
@@ -40,7 +43,10 @@ class SubProductSV extends BaseService
                 'subproducts.deleted_at',
                 'subproducts.deleted_by',
                 'products.product_name',
-                'colors.name as color_name'
+                'colors.name as color_name',
+                'categories.name as category_name',
+                'sub_category.name as sub_category_name',
+                'products.id as product_id',
             );
 
 
@@ -50,6 +56,21 @@ class SubProductSV extends BaseService
                 ->orWhere('products.product_name', 'LIKE', '%' . $params['search'] . '%')
                 ->orWhere('colors.name', 'LIKE', '%' . $params['search'] . '%');
         }
+
+        // Filter by product_id
+        if (isset($params['product_id'])) {
+            $query->where('subproducts.product_id', $params['product_id']);
+        }
+        // Filter by categories
+        if (isset($params['category_id'])) {
+            $query->where('categories.id', $params['category_id']);
+        }
+        // Filter by sub_category_id
+        if (isset($params['sub_category_id'])) {
+            $query->where('sub_category.id', $params['sub_category_id']);
+        }
+
+
 
         // Pagination setup
         // $limit = $params['limit'] ?? 10;
@@ -91,6 +112,9 @@ class SubProductSV extends BaseService
                 'deleted_by' => $subProduct->deleted_by,
                 'product_name' => $subProduct->product_name,
                 'color_name' => $subProduct->color_name,
+                'category_name' => $subProduct->category_name,
+                'sub_category_name' => $subProduct->sub_category_name,
+                'product_id' => $subProduct->product_id,
             ];
         });
 
