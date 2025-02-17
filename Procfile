@@ -1,2 +1,2 @@
-release: php artisan migrate --force && composer dumpautoload
-
+release: php artisan migrate --force
+release: composer dumpautoload
