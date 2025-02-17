@@ -1,2 +1,3 @@
-release: php artisan migrate --force && composer dumpautoload
-web: vendor/bin/heroku-php-apache2 -i php_custom.ini public/
+web: vendor/bin/heroku-php-apache2 public/
+release: php artisan migrate --force
+release: composer dumpautoload
