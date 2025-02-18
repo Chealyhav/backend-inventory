@@ -10,10 +10,22 @@ use App\Services\TelegramBotSV;  // Import the TelegramBotSV service
 
 class StockSv extends BaseService
 {
+
+    // protected $telegramBot;
+
+    // // Inject the TelegramBotSV service
+    // public function __construct(TelegramBotSV $telegramBot)
+    // {
+    //     $this->telegramBot = $telegramBot;
+    // }
+
     public function getQuery()
     {
         return Stock::query();
     }
+
+
+
 
     /**
      * Create a stock entry

@@ -27,20 +27,48 @@ class ColorSV extends BaseService
     {
 
         $query = $this->getQuery();
-        if(isset($params['search'])){
-            $query->where('name', 'LIKE', '%'.$params['search'].'%');
+
+        // Filter by search term
+        if (isset($params['search'])) {
+            $query->where('name', 'LIKE', '%' . $params['search'] . '%');
         }
-        if(isset($params['status'])){
+
+        // Filter by status
+        if (isset($params['status'])) {
             $query->where('status', $params['status']);
         }
-        //order by  created_at desc
+
+        // Apply ordering by created_at descending
         $query->orderBy('created_at', 'desc');
-        if(isset($query)){
-            $data = $query->get();
-            return $data;
-        } else {
-            throw new Exception('Query not found');
-        }
+
+        // Pagination setup
+        $limit = $params['limit'] ?? 10;  // Default to 10 items per page
+        $page = $params['page'] ?? 1;  // Default to the first page
+        $offset = ($page - 1) * $limit;  // Calculate the offset based on the page number
+
+        // Count total records for pagination
+        $total = $query->count();
+
+        // Apply pagination (limit and offset)
+        $query->skip($offset)->take($limit);
+
+        // Get the data
+        $data = $query->get();
+
+        // Calculate total pages for pagination
+        $totalPage = ceil($total / $limit);
+        $nextPage = $page + 1;
+        $prevPage = $page - 1;
+
+        return [
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'nextPage' => $nextPage,
+            'prevPage' => $prevPage,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'data' => $data,
+        ];
     }
 
 

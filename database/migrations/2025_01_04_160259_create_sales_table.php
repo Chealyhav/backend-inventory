@@ -13,19 +13,16 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
-            $table->integer('quantity');
-            $table->float('price')->default(0);
-            $table->decimal('total_price', 10, 2)->default(0);
-            $table->date('sale_date');
-            $table->foreignId('subproduct_id')->constrained()->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-
+            $table->enum('sale_type', ['material', 'finished_good']);
+            $table->integer('customer_id')->nullable();
+            $table->string('title')->nullable();
+            $table->timestamp('sale_date')->useCurrent();
+            $table->integer('invoice_id')->nullable();
+            $table->integer('sale_item_id')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
-
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null'); // Only this line
             $table->softDeletes();

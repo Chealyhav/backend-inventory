@@ -15,22 +15,6 @@ class StockController extends BaseAPI
         $this->stockService = new StockSv();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function index(Request $request)
     {
         try {

@@ -20,17 +20,25 @@ class SubcategorySV extends BaseService
     //get all category
     public function getAllSubcategories($params = [])
     {
-        
+
         // Build the query
         $query = $this->getQuery()->with('category')->select('id', 'name','SN', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
 
+        // Filter by search term
         if (isset($params['search'])) {
             $query->where('name', 'LIKE', '%' . $params['search'] . '%');
         }
-        if (isset($params['page'])) {
-            $page = $params['page'];
-            $query->offset(($page - 1) * 10)->limit(10);
-        }
+
+        // Pagination setup
+        $limit = $params['limit'] ?? 10;  // Default to 10 items per page
+        $page = $params['page'] ?? 1;  // Default to the first page
+        $offset = ($page - 1) * $limit;  // Calculate the offset based on the page number
+
+        // Count total records for pagination
+        $total = $query->count();
+
+        // Apply pagination (limit and offset)
+        $query->skip($offset)->take($limit);
 
         if (isset($params['category_id'])) {
             $query->where('category_id', $params['category_id']);
@@ -63,8 +71,20 @@ class SubcategorySV extends BaseService
             ];
         });
 
-        // Return response
-        return $result;
+        // Calculate total pages for pagination
+        $totalPage = ceil($total / $limit);
+        $nextPage = $page + 1;
+        $prevPage = $page - 1;
+
+        return [
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'nextPage' => $nextPage,
+            'prevPage' => $prevPage,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'data' => $result,
+        ];
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class TelegramBotSV extends BaseService
 {
@@ -20,6 +21,7 @@ class TelegramBotSV extends BaseService
         try {
             $token = env('TELEGRAM_BOT_TOKEN');  // Get the bot token from .env
             $chatId = env('TELEGRAM_CHAT_ID_DEV');  // Get the group chat ID from .env
+
             $url = "https://api.telegram.org/bot{$token}/sendMessage";
 
             // Ensure all necessary parameters exist in the array
@@ -40,13 +42,15 @@ class TelegramBotSV extends BaseService
                 'form_params' => [
                     'chat_id' => $chatId,
                     'text' => $message,
-                    'parse_mode' => 'HTML',  // To format the message in HTML
+                    'parse_mode' => 'HTML',
                 ],
-                'verify' => false  // Set to false to ignore SSL certificate verification (optional)
+                'verify' => false
             ]);
 
-            // Return the decoded response
-            return json_decode($response->getBody()->getContents(), true);
+            $result = json_decode($response->getBody()->getContents(), true);
+            Log::info('Telegram Response: ', $result);
+            return $result;
+
         } catch (Exception $e) {
             // Handle any errors by throwing an exception
             throw new Exception('Failed to send tracker product notification: ' . $e->getMessage());

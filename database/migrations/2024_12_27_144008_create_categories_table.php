@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique()->nullable();
+            $table->string('code')->nullable();
             $table->string('name')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
