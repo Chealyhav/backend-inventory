@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\API\v1\TelegramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -124,3 +125,18 @@ Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
 Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
 
 Route::post('/telegram_bot', [TelegramController::class, 'index']);
+
+
+Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class,'refreshToken']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/user/update', [AuthController::class, 'update']);
+    Route::get('/products', [ProductController::class, 'index']);
+
+});
+//Login and Register
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class,'register']);
+Route::get('/user', [AuthController::class, 'user']);
+

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use Illuminate\Support\Facades\DB;
 
 class ProductDetailSV  extends  BaseService
@@ -27,7 +28,7 @@ class ProductDetailSV  extends  BaseService
 
         // Apply custom search filter
         if (isset($params['search'])) {
-            $query->where(function($q) use ($params) {
+            $query->where(function ($q) use ($params) {
                 $q->where('p.product_name', 'LIKE', '%' . $params['search'] . '%')
                     ->orWhere('p.product_code', 'LIKE', '%' . $params['search'] . '%');
             });
@@ -54,7 +55,7 @@ class ProductDetailSV  extends  BaseService
         $total = $query->count();
 
         // Apply pagination (limit and offset)
-        $query->skip($offset)->take($limit);
+        // $query->skip($offset)->take($limit);
 
         // Execute the query and fetch the product data
         $productsData = $query->select(
@@ -63,6 +64,7 @@ class ProductDetailSV  extends  BaseService
             'p.product_name',
             'p.img_url',
             'p.stockType',
+            // 's.id',
             's.code',
             DB::raw('col.name as color_name'),
             's.length',
@@ -75,24 +77,8 @@ class ProductDetailSV  extends  BaseService
             's.currentStock',
             's.stockIn',
             's.stockOut',
+            's.id as subproduct_id',
             DB::raw("CASE WHEN s.remark THEN 'InStock' ELSE 'PreOrder' END as remark")
-
-
-
-        // DB::raw('COALESCE(s.length, 0.0) as length'),
-        // DB::raw('COALESCE(s.pieces, 0.0) as pieces'),
-        // DB::raw('COALESCE(s.thickness, 0.0) as thickness'),
-        // DB::raw('COALESCE(s.unit_weight, 0.0) as unit_weight'),
-        // DB::raw('COALESCE(s.total_weight, 0.0) as total_weight'),
-        // DB::raw('COALESCE(s.buy_price, 0.0) as buy_price'),
-        // DB::raw('COALESCE(s.sale_price, 0.0) as sale_price'),
-        // DB::raw('COALESCE(s.currentStock, 0.0) as currentStock'),
-        // DB::raw('COALESCE(s.stockIn, 0.0) as stockIn'),
-        // DB::raw('COALESCE(s.stockOut, 0.0) as stockOut'),
-        //remark  = 1 = InStock  else  = 0 = PreOrder
-
-        // DB::raw('CASE WHEN s.remark = true THEN "InStock" ELSE "PreOrder" END as remark')
-
         )->get();
 
         // Group the data by product
@@ -112,6 +98,7 @@ class ProductDetailSV  extends  BaseService
 
             // Add subproduct details
             $products[$item->id]['products'][] = [
+                'id' => $item->subproduct_id,
                 'code' => $item->code,
                 'color' => $item->color_name,
                 'length' => $item->length,
@@ -153,7 +140,7 @@ class ProductDetailSV  extends  BaseService
 
         // Apply custom search filter
         if (isset($params['search'])) {
-            $query->where(function($q) use ($params) {
+            $query->where(function ($q) use ($params) {
                 $q->where('p.product_name', 'LIKE', '%' . $params['search'] . '%')
                     ->orWhere('p.product_code', 'LIKE', '%' . $params['search'] . '%');
             });
@@ -184,6 +171,7 @@ class ProductDetailSV  extends  BaseService
 
         // Execute the query and fetch the product data
         $productsData = $query->select(
+            'p.id as product_id',
             'p.id',
             'p.product_code',
             'p.product_name',
@@ -207,7 +195,7 @@ class ProductDetailSV  extends  BaseService
             // Group by product id
             if (!isset($products[$item->id])) {
                 $products[$item->id] = [
-                    'productId' => $item->id,
+                    'productId' => $item->product_id,
                     'productCode' => $item->product_code,
                     'productName' => $item->product_name,
                     'productImage' => $item->img_url,
@@ -218,6 +206,7 @@ class ProductDetailSV  extends  BaseService
 
             // Add subproduct details
             $products[$item->id]['products'][] = [
+                'id' => $item->id,
                 'code' => $item->code,
                 'color' => $item->color_name,
                 'length' => $item->length,
@@ -235,6 +224,4 @@ class ProductDetailSV  extends  BaseService
         // Return the paginated data and the total count
         return array_values($products);
     }
-
-
 }

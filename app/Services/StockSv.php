@@ -44,35 +44,22 @@ class StockSv extends BaseService
 
             // Default for stock_out if not set, and default stock_date if not set
             $params['stock_out'] = $params['stock_out'] ?? 0;
-            $params['stock_date'] = $params['stock_date'] ?? now()->toDateString();
-            $params['status'] = $params['status'] ?? 1;
-
             // Calculate stock
             $params['stock'] = $params['stock_in'] - $params['stock_out'];
 
             // Create a new stock entry
             $stock = $this->getQuery()->create($params);
-
-            // Update the subproduct's current stock and stockin using a raw SQL query and count auto
             DB::table('subproducts')
                 ->where('id', $params['subproduct_id'])
                 ->update([
-                    'currentStock' => DB::raw('"currentStock" + ' . $params['stock_in']),  // Wrap in double quotes
-                    'stockIn' => DB::raw('"stockIn" + ' . $params['stock_in'])  // Wrap in double quotes
+                    'currentStock' => DB::raw('currentStock + ' . (int) $params['stock_in']),
+                    'stockIn' => DB::raw('stockIn + ' . (int) $params['stock_in'])
                 ]);
-
-
-
-            // Call the TelegramBotSV service to send a notification about the stock addition
-            $telegramService = new TelegramBotSV();  // Instantiate the TelegramBotSV service
-
-            // Fetch the subproduct details
+            $telegramService = new TelegramBotSV();
             $subproduct = DB::table('subproducts')->where('id', $params['subproduct_id'])->first();
-
-            // Prepare the parameters to send to Telegram
             $messageParams = [
                 'action' => 'add_stock',
-                'product_name' => 'Subproduct ' . ' (' . $subproduct->code . ')', // You can replace this with the actual product name if available
+                'product_name' => 'Subproduct ' . ' (' . $subproduct->code . ')',
                 'quantity' => $params['stock_in'],
             ];
 
@@ -139,20 +126,6 @@ class StockSv extends BaseService
             throw new Exception('Error decrementing stock: ' . $e->getMessage());
         }
     }
-
-
-    //Check Stock Auto  if currentStock < 40 make alert message telegram message please pre Order  subProductCode
-
-
-
-
-
-
-
-
-
-
-
 
 
 

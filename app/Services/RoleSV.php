@@ -13,18 +13,47 @@ class RoleSV extends BaseService
         return Role::query();
     }
 
-    public function RoleList($params = array())
+    public function RoleList($params = [])
     {
         $query = $this->getQuery();
-        if (isset($params['search'])) {
+
+        // Apply search filter
+        if (!empty($params['search'])) {
             $query->where('name', 'LIKE', '%' . $params['search'] . '%');
         }
+
+        // Apply status filter
         if (isset($params['status'])) {
             $query->where('status', $params['status']);
         }
+
+        // Order results by creation date
         $query->orderBy('created_at', 'desc');
-        return $query->get();
+
+        // Pagination logic
+        $limit = $params['limit'] ?? 10;
+        $page = $params['page'] ?? 1;
+        $offset = ($page - 1) * $limit;
+
+        $total = $query->count();
+        $totalPage = ceil($total / $limit);
+        $nextPage = $page < $totalPage ? $page + 1 : null;
+        $prevPage = $page > 1 ? $page - 1 : null;
+
+        // Apply pagination (this was missing in your code)
+        $data = $query->skip($offset)->take($limit)->get();
+
+        return [
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'nextPage' => $nextPage,
+            'prevPage' => $prevPage,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'data' => $data,
+        ];
     }
+
 
     public function RoleCreate(array $params = array())
     {
@@ -74,7 +103,6 @@ class RoleSV extends BaseService
         if ($role) {
             return $role;
         }
-
         throw new Exception("Role with ID {$id} not found.");
     }
 }

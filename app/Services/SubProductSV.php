@@ -20,7 +20,7 @@ class SubProductSV extends BaseService
         $query = $this->getQuery()
             ->join('products', 'products.id', '=', 'subproducts.product_id')
             ->join('colors', 'colors.id', '=', 'subproducts.color_id')
-            //categories.where('categories.id', $params['category_id'])
+
             ->leftJoin('sub_category', 'sub_category.id', '=', 'products.sub_category_id')
             ->leftJoin('categories', 'categories.id', '=', 'sub_category.category_id')
             ->select(
@@ -92,7 +92,7 @@ class SubProductSV extends BaseService
         }
         $data = $result->map(function ($subProduct) {
             return [
-                'id' => $subProduct->id,
+
                 'code' => $subProduct->code,
                 'pieces' => $subProduct->pieces,
                 'thickness' => $subProduct->thickness,
@@ -111,10 +111,11 @@ class SubProductSV extends BaseService
                 'deleted_at' => $subProduct->deleted_at,
                 'deleted_by' => $subProduct->deleted_by,
                 'product_name' => $subProduct->product_name,
+                'product_id' => $subProduct->product_id,
                 'color_name' => $subProduct->color_name,
                 'category_name' => $subProduct->category_name,
                 'sub_category_name' => $subProduct->sub_category_name,
-                'product_id' => $subProduct->product_id,
+                'id' => $subProduct->id,
             ];
         });
 
