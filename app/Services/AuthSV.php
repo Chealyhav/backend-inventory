@@ -91,6 +91,12 @@ class AuthSV extends BaseService
 
         ];
     }
+    // User logout
+    public function UserLogout()
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+        return response()->json(['message' => 'Successfully logged out']);
+    }
 
     // Refresh JWT token
     public function refresh()
@@ -109,4 +115,6 @@ class AuthSV extends BaseService
             throw new Exception('Token expired');
         }
     }
+
+    // Get user profile
 }

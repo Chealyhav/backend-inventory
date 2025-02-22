@@ -25,8 +25,6 @@ class StockSv extends BaseService
     }
 
 
-
-
     /**
      * Create a stock entry
      *
@@ -141,11 +139,18 @@ class StockSv extends BaseService
     {
         $query = $this->getQuery();
 
+
         // Apply filters if any
         if (isset($params['subproduct_id'])) {
             $query->where('subproduct_id', $params['subproduct_id']);
         }
-
+        if (isset($params['created_at'])) {
+            $query->where('created_at', '>=', $params['created_at']);
+        }
+        // search
+        if (!empty($params['search'])) {
+            $query->where('subproduct_id', 'LIKE', '%' . $params['search'] . '%');
+        }
         // Pagination
         $limit = $params['limit'] ?? 10;
         $page = $params['page'] ?? 1;
@@ -153,10 +158,22 @@ class StockSv extends BaseService
 
         $query->skip($offset)->take($limit);
 
-        // Fetch results
-        return $query->get();
-    }
+        $total = $query->count();
+        $totalPage = ceil($total / $limit);
+        $nextPage = $page + 1;
+        $prevPage = $page - 1;
+        $result = $query->get();
+        return [
+            'total' => $total,
+            'totalPage' => $totalPage,
+            'nextPage' => $nextPage,
+            'prevPage' => $prevPage,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'data' => $result,
+        ];
 
+    }
     /**
      * Get a stock entry by ID
      *
@@ -254,4 +271,6 @@ class StockSv extends BaseService
 
         return $stock->forceDelete();
     }
+
+
 }

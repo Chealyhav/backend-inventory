@@ -43,6 +43,16 @@ class AuthController extends BaseAPI
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
+    // Logout
+    public function logout(Request $request)
+    {
+        try {
+            $data = $this->authService->UserLogout();
+            return $this->successResponse($data, 'User logout successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
 
 
 }
