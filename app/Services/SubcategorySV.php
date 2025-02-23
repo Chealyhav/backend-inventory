@@ -20,25 +20,13 @@ class SubcategorySV extends BaseService
     //get all category
     public function getAllSubcategories($params = [])
     {
-
         // Build the query
-        $query = $this->getQuery()->with('category')->select('id', 'name','SN', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
+        $query = $this->getQuery()->with('category')->select('id', 'name', 'SN', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
 
         // Filter by search term
         if (isset($params['search'])) {
             $query->where('name', 'LIKE', '%' . $params['search'] . '%');
         }
-
-        // Pagination setup
-        $limit = $params['limit'] ?? 10;  // Default to 10 items per page
-        $page = $params['page'] ?? 1;  // Default to the first page
-        $offset = ($page - 1) * $limit;  // Calculate the offset based on the page number
-
-        // Count total records for pagination
-        $total = $query->count();
-
-        // Apply pagination (limit and offset)
-        $query->skip($offset)->take($limit);
 
         if (isset($params['category_id'])) {
             $query->where('category_id', $params['category_id']);
@@ -50,11 +38,27 @@ class SubcategorySV extends BaseService
             $query->orderBy($params['orderBy'], $params['order']);
         }
 
+        // Pagination setup
+        $limit = $params['limit'] ?? 10;
+        $page = $params['page'] ?? 1;
+        $offset = ($page - 1) * $limit;
+
+        // Apply ordering
+        $orderBy = $params['order_by'] ?? 'created_at';
+        $order = $params['order'] ?? 'asc';
+        $query->orderBy($orderBy, $order);
+
+        // Count total records for pagination
+        $total = $query->count();
+
+        // Apply pagination (limit and offset)
+        $query->skip($offset)->take($limit);
+
         // Execute the query and get the data
-        $data = $query->get();
+        $result = $query->get();
 
         // Transform the data to include category name
-        $result = $data->map(function ($subcategory) {
+        $result = $result->map(function ($subcategory) {
             return [
                 'id' => $subcategory->id,
                 'name' => $subcategory->name,
@@ -71,11 +75,10 @@ class SubcategorySV extends BaseService
             ];
         });
 
-        // Calculate total pages for pagination
+        // Calculate total pages
         $totalPage = ceil($total / $limit);
         $nextPage = $page + 1;
         $prevPage = $page - 1;
-
         return [
             'total' => $total,
             'totalPage' => $totalPage,
@@ -86,6 +89,7 @@ class SubcategorySV extends BaseService
             'data' => $result,
         ];
     }
+
 
 
     //get subcategory by id

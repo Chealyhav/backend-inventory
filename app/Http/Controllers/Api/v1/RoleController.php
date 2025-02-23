@@ -30,14 +30,11 @@ class RoleController extends BaseAPI
     }
 
     // Create a new role
-    public function store(StoreRoleRequest $request)
+    public function store(request $request)
     {
         try {
-            $param['name'] = $request->input('name');
-            $param['status'] = $request->input('status');
-            $param['created_by'] = $request->input('created_by');
+            $param = $request->all();
             $role = $this->roleSV->RoleCreate($param);
-
             return $this->sendResponse($role, 'Role created successfully.');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage());
@@ -45,13 +42,10 @@ class RoleController extends BaseAPI
     }
 
     // Update an existing role
-    public function update($id, UpdateRoleRequest $request)
+    public function update($id, request $request)
     {
         try {
-            $param['name'] = $request->input('name');
-            $param['status'] = $request->input('status');
-            $param['updated_by'] = $request->input('updated_by');
-
+            $param = $request->all();
             $role = $this->roleSV->RoleUpdate($id, $param);
 
             return $this->sendResponse($role, 'Role updated successfully.');

@@ -139,11 +139,33 @@ class StockSv extends BaseService
      */
     public function getAllStocks($params = [])
     {
-        $query = $this->getQuery();
+        $query = $this->getQuery()
+            ->leftJoin('subproducts', 'stocks.subproduct_id', '=', 'subproducts.id')
+            ->leftJoin('products', 'subproducts.product_id', '=', 'products.id')
+            ->select(
+                'stocks.id',
+                'stocks.stock_in',
+                'stocks.stock_out',
+                'stocks.stock',
+                'stocks.created_at',
+                'stocks.updated_at',
+                'subproducts.code as subproduct_code',
+                'products.product_name'
+            )
+            ->orderBy('stocks.created_at', 'desc');
 
         // Apply filters if any
+        if (isset($params['product_id'])) {
+            $query->where('products.id', operator: $params['product_id']);
+        }
         if (isset($params['subproduct_id'])) {
-            $query->where('subproduct_id', $params['subproduct_id']);
+            $query->where('subproducts.id', operator: $params['subproduct_id']);
+        }
+
+        // Search filter
+        if (isset($params['search'])) {
+            $query->where('subproducts.code', 'LIKE', '%' . $params['search'] . '%')
+            ->orWhere('products.product_name', 'LIKE', '%' . $params['search'] . '%');
         }
 
         // Pagination
@@ -153,9 +175,19 @@ class StockSv extends BaseService
 
         $query->skip($offset)->take($limit);
 
-        // Fetch results
-        return $query->get();
+        $results = $query->get();
+
+        return [
+            'total' => $query->count(),
+            'totalPage' => ceil($query->count() / $limit),
+            'nextPage' => $page + 1,
+            'prevPage' => $page > 1 ? $page - 1 : null,
+            'currentPage' => $page,
+            'limit' => $limit,
+            'data' => $results,
+        ];
     }
+
 
     /**
      * Get a stock entry by ID

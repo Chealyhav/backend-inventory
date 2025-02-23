@@ -135,8 +135,13 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('/products', [ProductController::class, 'index']);
 
 });
+
 //Login and Register
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class,'register']);
-Route::get('/user', [AuthController::class, 'user']);
+
+Route::get('/users', [UserController::class, 'index']);
+Route::post('/users', [UserController::class,'store']);
+Route::get('/users/{id}', [UserController::class, 'show']);
+Route::put('/users/{id}', [UserController::class, 'update']);
 

@@ -58,11 +58,8 @@ class RoleSV extends BaseService
     public function RoleCreate(array $params = array())
     {
         $query = $this->getQuery();
-        return $query->create([
-            'name' => $params['name'],
-            'status' => $params['status'],
-            //'created_by' => Auth::user()->id, // assuming you're using Auth
-        ]);
+        $role = $query->create($params);
+        return $role;
     }
 
     public function RoleUpdate($id, array $params = array())

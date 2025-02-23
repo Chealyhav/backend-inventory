@@ -18,7 +18,7 @@ class ProductDetailSV  extends  BaseService
             ->leftJoin('subproducts as s', 'p.id', '=', 's.product_id')
             ->leftJoin('sub_category as sc', 'p.sub_category_id', '=', 'sc.id')
             ->leftJoin('categories as c', 'sc.category_id', '=', 'c.id')
-            ->leftJoin('colors as col', 's.color_id', '=', 'c.id')
+            ->leftJoin('colors as col', 's.color_id', '=', 'col.id') // Fixed join condition
             ->where('c.id', '=', $categoryId);
 
         // If a subcategory ID is provided, filter by subcategory
@@ -40,6 +40,9 @@ class ProductDetailSV  extends  BaseService
                 $query->where($column, $value);
             }
         }
+        if(isset($params['sub_category_id'])) {
+            $query->where('p.sub_category_id', $params['sub_category_id']);
+         }
 
         // Pagination setup
         $limit = $params['limit'] ?? 10;
@@ -67,6 +70,7 @@ class ProductDetailSV  extends  BaseService
             // 's.id',
             's.code',
             DB::raw('col.name as color_name'),
+            'col.id as color_id',
             's.length',
             's.pieces',
             's.thickness',
@@ -130,7 +134,7 @@ class ProductDetailSV  extends  BaseService
             ->leftJoin('subproducts as s', 'p.id', '=', 's.product_id')
             ->leftJoin('sub_category as sc', 'p.sub_category_id', '=', 'sc.id')
             ->leftJoin('categories as c', 'sc.category_id', '=', 'c.id')
-            ->leftJoin('colors as col', 's.color_id', '=', 'c.id')
+            ->leftJoin('colors as col', 's.color_id', '=', 'col.id') // Fixed join condition
             ->where('c.id', '=', $categoryId);
 
         // If a subcategory ID is provided, filter by subcategory
@@ -144,6 +148,10 @@ class ProductDetailSV  extends  BaseService
                 $q->where('p.product_name', 'LIKE', '%' . $params['search'] . '%')
                     ->orWhere('p.product_code', 'LIKE', '%' . $params['search'] . '%');
             });
+        }
+
+        if(isset($params['sub_category_id'])) {
+           $query->where('p.sub_category_id', $params['sub_category_id']);
         }
 
         // Apply custom filters if provided
@@ -166,9 +174,6 @@ class ProductDetailSV  extends  BaseService
         // Count total records for pagination
         $total = $query->count();
 
-        // Apply pagination (limit and offset)
-        $query->skip($offset)->take($limit);
-
         // Execute the query and fetch the product data
         $productsData = $query->select(
             'p.id as product_id',
@@ -179,6 +184,7 @@ class ProductDetailSV  extends  BaseService
             'p.stockType',
             's.code',
             DB::raw('col.name as color_name'),
+            'col.id as color_id',
             's.length',
             's.pieces',
             's.buy_price',
@@ -186,7 +192,8 @@ class ProductDetailSV  extends  BaseService
             's.currentStock',
             's.stockIn',
             's.stockOut',
-            DB::raw("CASE WHEN s.remark THEN 'InStock' ELSE 'PreOrder' END as remark")
+            DB::raw("CASE WHEN s.remark THEN 'InStock' ELSE 'PreOrder' END as remark"),
+            's.id as subproduct_id',
         )->get();
 
         // Group the data by product
@@ -206,7 +213,7 @@ class ProductDetailSV  extends  BaseService
 
             // Add subproduct details
             $products[$item->id]['products'][] = [
-                'id' => $item->id,
+                'id' => $item->subproduct_id,
                 'code' => $item->code,
                 'color' => $item->color_name,
                 'length' => $item->length,
