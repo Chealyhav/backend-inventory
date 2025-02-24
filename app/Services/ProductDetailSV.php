@@ -54,20 +54,13 @@ class ProductDetailSV  extends  BaseService
         $order = $params['order'] ?? 'asc';
         $query->orderBy($orderBy, $order);
 
-        // Count total records for pagination
         $total = $query->count();
-
-        // Apply pagination (limit and offset)
-        // $query->skip($offset)->take($limit);
-
-        // Execute the query and fetch the product data
         $productsData = $query->select(
             'p.id',
             'p.product_code',
             'p.product_name',
             'p.img_url',
             'p.stockType',
-            // 's.id',
             's.code',
             DB::raw('col.name as color_name'),
             'col.id as color_id',
