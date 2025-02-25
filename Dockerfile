@@ -1,6 +1,7 @@
-FROM php:8.1-fpm
+# Use PHP 8.1 FPM image as base
+FROM php:8.2-fpm AS base
 
-# Install dependencies
+# Install dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpng-dev \
@@ -15,15 +16,13 @@ RUN apt-get update && apt-get install -y \
     curl \
     libzip-dev \
     libonig-dev \
-    libxml2-dev
+    libxml2-dev && \
+    docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
-
-# Install Composer
+# Copy Composer from the official Composer image
+FROM base AS composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
@@ -32,15 +31,18 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install dependencies
-RUN composer install --optimize-autoloader --no-dev
+# Install Composer dependencies
+RUN composer install --optimize-autoloader --no-dev --no-scripts
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 9000
+# Expose PHP-FPM port
 EXPOSE 9000
 
-# Start PHP-FPM
+# Switch to non-root user for better security
+USER www-data
+
+# Start PHP-FPM server
 CMD ["php-fpm"]

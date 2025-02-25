@@ -2,14 +2,28 @@
 <?php
 
 use Symfony\Component\Console\Input\ArgvInput;
+use Illuminate\Support\Facades\Artisan;
 
 define('LARAVEL_START', microtime(true));
 
-// Register the Composer autoloader...
+// Register the Composer autoloader
 require __DIR__.'/vendor/autoload.php';
 
-// Bootstrap Laravel and handle the command...
-$status = (require_once __DIR__.'/bootstrap/app.php')
-    ->handleCommand(new ArgvInput);
+// Bootstrap the application
+$app = require_once __DIR__.'/bootstrap/app.php';
 
+// Handle the command input from CLI
+$input = new ArgvInput();
+
+// Check if it's an Artisan command or something else
+try {
+    // You can call specific Artisan commands like this
+    $status = Artisan::handle($input);
+} catch (Exception $e) {
+    // If an error occurs, output the exception message
+    fwrite(STDERR, 'Error: ' . $e->getMessage() . PHP_EOL);
+    $status = 1; // Non-zero status for errors
+}
+
+// Exit with the status code
 exit($status);
