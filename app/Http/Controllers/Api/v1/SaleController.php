@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1;
+namespace App\Http\Controllers\Api\v1;
 
 use App\Services\TelegramBotSV;  // Import the TelegramBotSV service
 use Illuminate\Http\Request;

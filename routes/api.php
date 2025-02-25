@@ -1,20 +1,20 @@
 <?php
 
 use App\Http\Controllers\Api\v1\AuthController;
-use App\Http\Controllers\API\v1\TelegramController;
+use App\Http\Controllers\Api\v1\TelegramController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\v1\ColorController;
-use App\Http\Controllers\API\v1\ProductController;
-use App\Http\Controllers\API\v1\CategoryController;
+use App\Http\Controllers\Api\v1\ColorController;
+use App\Http\Controllers\Api\v1\ProductController;
+use App\Http\Controllers\Api\v1\CategoryController;
 use App\Http\Controllers\Api\v1\ProductDetailController;
-use App\Http\Controllers\API\v1\SubCategoryController;
-use App\Http\Controllers\API\v1\SubProductController;
-use App\Http\Controllers\API\v1\SaleController;
-use App\Http\Controllers\API\v1\SaleDetailController;
-use App\Http\Controllers\API\v1\StockController;
-use App\Http\Controllers\API\v1\UserController;
-use App\Http\Controllers\API\v1\RoleController;
+use App\Http\Controllers\Api\v1\SubCategoryController;
+use App\Http\Controllers\Api\v1\SubProductController;
+use App\Http\Controllers\Api\v1\SaleController;
+use App\Http\Controllers\Api\v1\SaleDetailController;
+use App\Http\Controllers\Api\v1\StockController;
+use App\Http\Controllers\Api\v1\UserController;
+use App\Http\Controllers\Api\v1\RoleController;
 use App\Http\Controllers\Api\v1\CloudinaryController;
 use App\Http\Controllers\Api\v1\ProductExportController;
 

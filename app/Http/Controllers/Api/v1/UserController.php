@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1;
-use App\Http\Controllers\Controller;
+namespace App\Http\Controllers\Api\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Services\UserSV;
