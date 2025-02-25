@@ -13,18 +13,10 @@ use App\Http\Controllers\API\v1\SubProductController;
 use App\Http\Controllers\API\v1\SaleController;
 use App\Http\Controllers\API\v1\SaleDetailController;
 use App\Http\Controllers\API\v1\StockController;
-use App\Http\Controllers\API\v1\SubscriptionDetailController;
 use App\Http\Controllers\API\v1\UserController;
 use App\Http\Controllers\API\v1\RoleController;
 use App\Http\Controllers\Api\v1\CloudinaryController;
-
-
-
-//middleware('auth:api')
-
-// Route::middleware('auth:api' v1)->get('/user', function (Request $request) {
-
-// });
+use App\Http\Controllers\Api\v1\ProductExportController;
 
 //   // Create a new sale
 //   Route::post('/sales', [SaleController::class, 'store']);
@@ -43,7 +35,6 @@ Route::post('/process-payment', [SaleController::class, 'processPayment']); // P
 Route::post('/upload', [CloudinaryController::class, 'uploadImage']);
 Route::delete('/delete', [CloudinaryController::class, 'deleteImage']);
 Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
-
 
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
@@ -145,3 +136,6 @@ Route::post('/users', [UserController::class,'store']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 
+
+Route::get('/export-products-excel', [ProductExportController::class, 'exportExcel']);
+Route::get('/export-products-pdf', [ProductExportController::class, 'exportPdf']);
