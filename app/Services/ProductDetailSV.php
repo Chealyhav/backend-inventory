@@ -10,7 +10,7 @@ class ProductDetailSV  extends  BaseService
     //get all products by category
     public function getAllAluminumProductsByCategory(array $params)
     {
-        $categoryId = $params['category'] ?? 4;
+        $categoryId = $params['category'] ?? 2;
         $subcategoryId = $params['subcategory'] ?? null;
 
         // Start the query to get products based on category
@@ -119,7 +119,7 @@ class ProductDetailSV  extends  BaseService
 
     public function getAccessoriesProductsByCategory(array $params)
     {
-        $categoryId = $params['category'] ?? 5;
+        $categoryId = $params['category'] ?? 1;
         $subcategoryId = $params['subcategory'] ?? null;
 
         // Start the query to get products based on category
