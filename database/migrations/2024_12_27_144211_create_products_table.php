@@ -19,12 +19,11 @@ return new class extends Migration
             $table->foreignId('sub_category_id')->constrained('sub_category');
             $table->double('availableStock')->default(0.0);
             $table->string('stockType')->nullable();
-
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
-
+            $table->string('description')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null');
             $table->softDeletes();

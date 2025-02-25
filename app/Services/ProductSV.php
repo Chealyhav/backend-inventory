@@ -7,14 +7,14 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Services\CloudinarySv;
+use App\Services\CloudinarySV;
 
 class ProductSV extends BaseService
 {
     protected $cloudinarySv;
 
     // Inject CloudinarySv service into the constructor
-    public function __construct(CloudinarySv $cloudinarySv)
+    public function __construct(CloudinarySV $cloudinarySv)
     {
         $this->cloudinarySv = $cloudinarySv;
     }

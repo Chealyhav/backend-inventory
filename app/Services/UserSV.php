@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Services\CloudinarySv;
+use App\Services\CloudinarySV;
 
 class UserSV extends BaseService
 {
@@ -14,7 +14,7 @@ class UserSV extends BaseService
 
     public function __construct()
     {
-        $this->cloudinarySv = new CloudinarySv();
+        $this->cloudinarySv = new CloudinarySV();
     }
 
     public function getQuery()

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('invoice_id')->nullable();
             $table->integer('sale_item_id')->nullable();
             $table->boolean('status')->default(1);
+            $table->string('notes')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

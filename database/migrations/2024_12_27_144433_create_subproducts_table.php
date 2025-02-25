@@ -27,6 +27,7 @@ return new class extends Migration
             $table->decimal('currentStock')->default(0);
             $table->decimal('stockOut')->default(0);
             $table->decimal('stockIn')->default(0);
+            $table->string('description')->nullable();
 
             // Foreign key constraints
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

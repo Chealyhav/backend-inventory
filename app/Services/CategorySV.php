@@ -57,9 +57,6 @@ class CategorySV extends BaseService
      */
     public function createCategory(array $data)
     {
-        if (!isset($data['code']) || empty($data['code'])) {
-            $data['code'] = 'default_code'; // Provide a default value if not supplied
-        }
         return $this->getQuery()->create($data);
     }
 

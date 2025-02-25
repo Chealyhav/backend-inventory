@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('sub_category', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('SN')->nullable();
+            $table->string('description')->nullable();
             $table->foreignId('category_id')->constrained('categories');
 
             $table->boolean('status')->default(1);

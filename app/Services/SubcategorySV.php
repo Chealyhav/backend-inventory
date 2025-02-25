@@ -13,15 +13,11 @@ class SubcategorySV extends BaseService
     {
         return Subcategory::query();
     }
-
-
-    // Additional methods for Subcategory service
-
     //get all category
     public function getAllSubcategories($params = [])
     {
         // Build the query
-        $query = $this->getQuery()->with('category')->select('id', 'name', 'SN', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
+        $query = $this->getQuery()->with('category')->select('id', 'name', 'category_id', 'status', 'updated_at', 'created_at', 'created_by', 'updated_by', 'deleted_at', 'deleted_by');
 
         // Filter by search term
         if (isset($params['search'])) {
@@ -62,7 +58,6 @@ class SubcategorySV extends BaseService
             return [
                 'id' => $subcategory->id,
                 'name' => $subcategory->name,
-                'SN' => $subcategory->SN,
                 'category_id' => $subcategory->category_id,
                 'status' => $subcategory->status,
                 'categoryname' => $subcategory->category ? $subcategory->category->name : null,

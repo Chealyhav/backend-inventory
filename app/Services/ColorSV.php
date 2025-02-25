@@ -19,10 +19,6 @@ class ColorSV extends BaseService
         return Color::query();
     }
 
-
-
-
-
     public function ColorList($params = array())
     {
 
@@ -79,7 +75,6 @@ class ColorSV extends BaseService
             $data = $query->create(
                 [
                     'name' => $params['name'] ?? null,
-                    'code' => $params['code'] ?? null,
                     // 'created_by' => Auth::user()->id,
 
                 ]
@@ -100,7 +95,6 @@ class ColorSV extends BaseService
                 $data->update(
                     [
                         'name' => $params['name']?? null,
-                        'code' => $params['code'] ?? null,
                         'updated_by' => Auth::user()->id ?? null,
                     ]
                 );

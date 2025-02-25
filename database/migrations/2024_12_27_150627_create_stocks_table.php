@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('stock')->default(0);
             $table->date('stock_date');
             $table->foreignId('subproduct_id')->constrained()->onDelete('cascade');
-
+            $table->string('description')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
