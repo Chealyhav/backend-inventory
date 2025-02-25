@@ -5,7 +5,7 @@ namespace App\Services;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use InvalidArgumentException;
 
-class CloudinarySv
+class CloudinarySv extends BaseService
 {
     /**
      * Upload an image to Cloudinary.

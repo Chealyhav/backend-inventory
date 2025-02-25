@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\TelegramController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\ColorController;
 use App\Http\Controllers\Api\v1\ProductController;
@@ -139,3 +138,8 @@ Route::put('/users/{id}', [UserController::class, 'update']);
 
 Route::get('/export-products-excel', [ProductExportController::class, 'exportExcel']);
 Route::get('/export-products-pdf', [ProductExportController::class, 'exportPdf']);
+
+//test route
+Route::get('/test', function () {
+    return response()->json(['message' => 'Test route is working!']);
+});
