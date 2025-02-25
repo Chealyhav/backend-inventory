@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API\v1;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Controllers\API\v1\BaseAPI;
+use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Services\RoleSV;
 use App\Http\Requests\StoreRoleRequest;  // Import the StoreRoleRequest
 use App\Http\Requests\UpdateRoleRequest; // Import the UpdateRoleRequest

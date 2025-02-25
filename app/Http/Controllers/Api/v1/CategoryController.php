@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Http\Controllers\API\v1\BaseAPI;
+use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Services\CategorySV;
 use Illuminate\Http\Request;
 
