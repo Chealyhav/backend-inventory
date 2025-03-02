@@ -16,7 +16,7 @@ class AuthController extends BaseAPI
     }
     public function login(Request $request)
     {
-       try {
+        try {
             $data = $this->authService->UserLogin($request->all());
             return $this->successResponse($data, 'User login successfully');
         } catch (\Exception $e) {
@@ -43,6 +43,27 @@ class AuthController extends BaseAPI
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
-
-
+    // Logout user
+    public function logout(Request $request)
+    {
+        try {
+            $data = $this->authService->logout();
+            return $this->successResponse($data, 'User logout successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+    // Reset password
+    public function resetPassword($token, $password, Request $request)
+    {
+        try {
+            $params = $request->all();
+            $params['token'] = $token;
+            $params['password'] = $password;
+            $data = $this->authService->resetPassword($params, $password);
+            return $this->successResponse($data, 'Password reset successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
 }

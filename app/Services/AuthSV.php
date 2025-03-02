@@ -47,10 +47,10 @@ class AuthSV extends BaseService
         ]);
 
         $token = JWTAuth::fromUser($user);
-     //get role name by role id
-     $role = DB::table('roles')->where('id', $user->role_id)
-     ->select('name')
-     ->first();
+        //get role name by role id
+        $role = DB::table('roles')->where('id', $user->role_id)
+            ->select('name')
+            ->first();
 
         return [
             'user' => $user,
@@ -77,8 +77,8 @@ class AuthSV extends BaseService
 
         //get role name by role id
         $role = DB::table('roles')->where('id', $user->role_id)
-        ->select('name')
-        ->first();
+            ->select('name')
+            ->first();
 
         $token = JWTAuth::fromUser($user);
 
@@ -108,5 +108,29 @@ class AuthSV extends BaseService
         } catch (TokenExpiredException $e) {
             throw new Exception('Token expired');
         }
+    }
+    // Logout user
+    public function logout()
+    {
+        $token = JWTAuth::invalidate(JWTAuth::getToken());
+
+        if (!$token) {
+            throw new Exception('Token not found');
+        }
+        return  $token;
+    }
+    //resetPassword
+    public function resetPassword($token, $password)
+    {
+        $user = JWTAuth::toUser($token);
+        $user->password = bcrypt($password);
+        $user->save();
+        if (!$user) {
+            throw new Exception('User not found');
+        }
+        if ($user->password === $password) {
+            throw new Exception('New password cannot be the same as the old password');
+        }
+        return $user;
     }
 }

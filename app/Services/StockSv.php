@@ -47,16 +47,19 @@ class StockSv extends BaseService
             // Calculate stock
             $params['stock'] = $params['stock_in'] - $params['stock_out'];
 
+
+            $subproduct = DB::table('subproducts')->where('id', $params['subproduct_id'])->first();
             // Create a new stock entry
             $stock = $this->getQuery()->create($params);
             DB::table('subproducts')
-                ->where('id', $params['subproduct_id'])
-                ->update([
-                    'currentStock' => DB::raw('currentStock + ' . (int) $params['stock_in']),
-                    'stockIn' => DB::raw('stockIn + ' . (int) $params['stock_in'])
-                ]);
+            ->where('id', $params['subproduct_id'])
+            ->update([
+                'currentStock' => DB::raw('"currentStock" + ' . (int) $params['stock_in']),
+                'total_weight' => DB::raw('"total_weight" + ' . ((int) $params['stock_in'] * (float) $subproduct->unit_weight)),
+                'stockIn' => DB::raw('"stockIn" + ' . (int) $params['stock_in'])
+            ]);
+
             $telegramService = new TelegramBotSV();
-            $subproduct = DB::table('subproducts')->where('id', $params['subproduct_id'])->first();
             $messageParams = [
                 'action' => 'add_stock',
                 'product_name' => 'Subproduct ' . ' (' . $subproduct->code . ')',
@@ -129,8 +132,6 @@ class StockSv extends BaseService
 
 
 
-
-
     /**
      * Get all stock records
      *
@@ -165,7 +166,7 @@ class StockSv extends BaseService
         // Search filter
         if (isset($params['search'])) {
             $query->where('subproducts.code', 'LIKE', '%' . $params['search'] . '%')
-            ->orWhere('products.product_name', 'LIKE', '%' . $params['search'] . '%');
+                ->orWhere('products.product_name', 'LIKE', '%' . $params['search'] . '%');
         }
 
         // Pagination
@@ -268,6 +269,8 @@ class StockSv extends BaseService
 
         return $stock->restore();
     }
+
+
 
     /**
      * Permanently delete a stock entry from the database

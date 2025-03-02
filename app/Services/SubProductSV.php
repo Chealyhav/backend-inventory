@@ -112,7 +112,7 @@ class SubProductSV extends BaseService
                 'deleted_by' => $subProduct->deleted_by,
                 'product_name' => $subProduct->product_name,
                 'product_id' => $subProduct->product_id,
-                'color_name' => $subProduct->color_name,
+                'color_name' => $subProduct->color_name ?? '',
                 'category_name' => $subProduct->category_name,
                 'sub_category_name' => $subProduct->sub_category_name,
                 'id' => $subProduct->id,
@@ -172,9 +172,9 @@ class SubProductSV extends BaseService
             throw new Exception('Product ID is required.');
         }
 
-        if (empty($params['color_id'])) {
-            throw new Exception('Color ID is required.');
-        }
+        // if (empty($params['color_id'])) {
+        //     throw new Exception('Color ID is required.');
+        // }
         $params['status'] = $params['status'] ?? 1;
         $subProduct = $this->getQuery()->create($params);
 
