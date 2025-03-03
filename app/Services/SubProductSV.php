@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\SubProduct;
+use App\Models\Subproduct;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -11,7 +11,7 @@ class SubProductSV extends BaseService
     // Get base query
     public function getQuery()
     {
-        return SubProduct::query();
+        return Subproduct::query();
     }
 
     // Get all subproducts with optional filters and pagination
@@ -257,7 +257,39 @@ class SubProductSV extends BaseService
 
         return $subProduct->forceDelete();
     }
+    //delete product
+    public function deleteProductFromDb($id)
+    {
+        $query = $this->getQuery();
 
+        if(isset($query)){
+            $data = $query->where('id', $id)->first();
+            if(isset($data)){
+                $data->delete();
+                return $data;
+            } else {
+                throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
+            }
+        } else {
+            throw new Exception('Query not found');
+        }
+    }
+
+
+    public function SubProductDelete($id)
+    {
+
+        $query = $this->getQuery();
+        $subProduct = $query->find($id);
+
+        if ($subProduct) {
+            $subProduct->delete();
+            return $subProduct;
+        }
+
+        throw new Exception("Role with ID {$id} not found.");
+
+    }
 
 
 

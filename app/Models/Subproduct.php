@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Subproduct extends Model
 {
-    use  SoftDeletes,  HasFactory;
+    use    HasFactory;
     protected $table = "subproducts"; // Table name
     protected $fillable = [
         'code',

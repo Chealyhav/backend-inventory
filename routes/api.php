@@ -128,10 +128,15 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/telegram_bot', [TelegramController::class, 'index']);
 });
 
-
-
 Route::get('/export-products-excel', [ProductExportController::class, 'exportExcel']);
 Route::get('/export-products-pdf', [ProductExportController::class, 'exportPdf']);
+
+
+
+
+
+
+
 
 //test route
 // Route::get('/test', function () {
@@ -148,6 +153,11 @@ Route::post('/subproducts', [SubProductController::class, 'store']);
 Route::get('/subproducts/{id}', [SubProductController::class, 'show']);
 Route::put('/subproducts/{id}', [SubProductController::class, 'update']);
 Route::delete('/subproducts/{id}', [SubProductController::class, 'destroy']);
+// Route::delete('/subproducts/{id}', [SubProductController::class, 'forceDelete']);
+Route::post('subproducts/{id}/restore', [SubProductController::class,'restore']);
+
+
+
 
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/refresh', [AuthController::class, 'refreshToken']);
@@ -199,40 +209,41 @@ Route::put('/colors/{id}', [ColorController::class, 'update']);
 Route::delete('/colors/{id}', [ColorController::class, 'destroy']);
 Route::delete('colors/{id}/restore', [ColorController::class, 'restore']);
 
-
-
-
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/products', [ProductController::class, 'store']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::post('/products/{id}', [ProductController::class, 'update']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-
-
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::post('/categories', [CategoryController::class, 'store']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 Route::put('/categories/{id}', [CategoryController::class, 'update']);
 Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-
 Route::get('/subcategories', [SubCategoryController::class, 'index']);
 Route::post('/subcategories', [SubCategoryController::class, 'store']);
 Route::get('/subcategories/{id}', [SubCategoryController::class, 'show']);
 Route::put('/subcategories/{id}', [SubCategoryController::class, 'update']);
 Route::delete('/subcategories/{id}', [SubCategoryController::class, 'destroy']);
 Route::post('subcategories/{id}/restore', [SubCategoryController::class, 'restore']);
-
 Route::get('/subproducts', [SubProductController::class, 'index']);
 Route::post('/subproducts', [SubProductController::class, 'store']);
 Route::get('/subproducts/{id}', [SubProductController::class, 'show']);
 Route::put('/subproducts/{id}', [SubProductController::class, 'update']);
 Route::delete('/subproducts/{id}', [SubProductController::class, 'destroy']);
-
 Route::get('/sales', [SaleController::class, 'index']);
 Route::post('/sales', [SaleController::class, 'store']);
 Route::get('/sales/{id}', [SaleController::class, 'show']);
 Route::put('/sales/{id}', [SaleController::class, 'update']);
 Route::delete('/sales/{id}', [SaleController::class, 'destroy']);
+
+
+
+
+
+
+
+
+
 
 Route::get('/sale_details', [SaleDetailController::class, 'index']);
 Route::post('/sale_details', [SaleDetailController::class, 'store']);

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Requests\SubProductsRequest;
 use Illuminate\Http\Request;
-use App\Http\Controllers\API\v1\BaseAPI;
+use App\Http\Controllers\Api\v1\BaseAPI;
 use App\Services\SubProductSV;
 
 class SubProductController extends BaseAPI
@@ -70,7 +70,7 @@ class SubProductController extends BaseAPI
     {
         try {
 
-            $subProduct = $this->subProductService->deleteSubProduct($id);
+            $subProduct = $this->subProductService->SubProductDelete($id);
             return $this->successResponse($subProduct, 'SubProduct deleted successfully.');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
@@ -92,7 +92,7 @@ class SubProductController extends BaseAPI
     public function forceDelete($id)
     {
         try {
-            $subProduct = $this->subProductService->deleteSubProductFromDb($id);
+            $subProduct = $this->subProductService->SubProductDelete($id);
             return $this->successResponse($subProduct, 'SubProduct permanently deleted.');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());

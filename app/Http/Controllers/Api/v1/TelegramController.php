@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Services\TelegramBotSV;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\v1\BaseAPI;
 
 class TelegramController extends BaseAPI
 {
