@@ -88,14 +88,5 @@ class SubProductController extends BaseAPI
         }
     }
 
-    // Permanently delete a subproduct
-    public function forceDelete($id)
-    {
-        try {
-            $subProduct = $this->subProductService->SubProductDelete($id);
-            return $this->successResponse($subProduct, 'SubProduct permanently deleted.');
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), $e->getCode());
-        }
-    }
+
 }

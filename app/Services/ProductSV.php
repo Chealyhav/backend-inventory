@@ -246,7 +246,7 @@ class ProductSV extends BaseService
         if (empty($id)) {
             throw new Exception('Product ID is required.');
         }
-        $product = $this->getQuery()->withTrashed()->find($id);
+        $product = $this->getQuery()->find($id);
 
         if (!$product) {
             throw new ModelNotFoundException('Product not found.');
@@ -257,6 +257,6 @@ class ProductSV extends BaseService
             $this->cloudinarySv->deleteImage($product->img_url);
         }
 
-        return $product->forceDelete();
+        return $product->delete();
     }
 }

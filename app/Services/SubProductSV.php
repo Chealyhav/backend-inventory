@@ -285,13 +285,10 @@ class SubProductSV extends BaseService
         if ($subProduct) {
             $subProduct->delete();
             return $subProduct;
+        } else {
+            throw new Exception("SubProduct with ID {$id} not found.");
         }
 
-        throw new Exception("Role with ID {$id} not found.");
-
     }
-
-
-
 
 }
