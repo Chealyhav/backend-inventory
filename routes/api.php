@@ -138,10 +138,10 @@ Route::get('/export-products-pdf', [ProductExportController::class, 'exportPdf']
 
 
 
-//test route
-Route::get('/test', function () {
-    return response()->json(['message' => 'Test route is working!']);
-});
+// //test route
+// Route::get('/test', function () {
+//     return response()->json(['message' => 'Test route is working!']);
+// });
 
 //Login and Register
 Route::post('/logout', [AuthController::class, 'logout']);

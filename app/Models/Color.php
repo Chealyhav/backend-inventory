@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Color extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     protected $table = 'colors';
     protected $fillable = ['name', 'code', 'status'];
 

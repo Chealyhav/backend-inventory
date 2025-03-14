@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Stock extends Model
 {
-    use SoftDeletes, HasFactory;  // Use the SoftDeletes trait to handle soft deletes
+    use HasFactory;  // Use the SoftDeletes trait to handle soft deletes
 
     protected $table = "stocks";  // Define the table name if it's not the default (plural form)
 

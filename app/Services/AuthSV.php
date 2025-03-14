@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\JWTAuth as JWTAuthFactory;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Illuminate\Support\Facades\Hash;
 use Exception;
@@ -110,14 +111,16 @@ class AuthSV extends BaseService
         }
     }
     // Logout user
-    public function logout()
+    public function logout( $token )
     {
-        $token = JWTAuth::invalidate(JWTAuth::getToken());
+        // Logout user
 
+        $token = JWTAuth::invalidate(JWTAuth::getToken());
         if (!$token) {
             throw new Exception('Token not found');
         }
-        return  $token;
+        Auth::guard('api')->logout();
+        return response()->json(['message' => 'Successfully logged out']);
     }
     //resetPassword
     public function resetPassword($token, $password)

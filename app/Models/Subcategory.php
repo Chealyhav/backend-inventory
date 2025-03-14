@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Subcategory extends Model
 {
 
-    use HasFactory, SoftDeletes;
+    use HasFactory;
     protected $table = 'sub_category';
     protected $fillable = [
         'name',

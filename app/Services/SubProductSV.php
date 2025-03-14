@@ -123,43 +123,18 @@ class SubProductSV extends BaseService
     }
 
     // Get subproduct by ID
-    public function getSubProductById($id)
+    public function getSubProductById($id, $params = [])
     {
         if (empty($id)) {
             throw new Exception('SubProduct ID is required.');
         }
-
-        $subProduct = $this->getQuery()
-            ->where('subproducts.id', $id)
-            ->join('products', 'products.id', '=', 'subproducts.product_id')
-            ->join('colors', 'colors.id', '=', 'subproducts.color_id')
-            ->select(
-                'subproducts.id',
-                'products.product_name',
-                'colors.name as color_name',
-                'subproducts.code',
-                'subproducts.pieces',
-                'subproducts.thickness',
-                'subproducts.length',
-                'subproducts.unit_weight',
-                'subproducts.total_weight',
-                'subproducts.sale_price',
-                'subproducts.buy_price',
-                'subproducts.discount',
-                'subproducts.status',
-                'subproducts.created_at',
-                'subproducts.updated_at',
-                'subproducts.created_by',
-                'subproducts.updated_by',
-                'subproducts.deleted_at',
-                'subproducts.deleted_by'
-            )
-            ->first();  // Use first() since you're fetching a single record
-
+        $subProduct = $this->getQuery()->find($id);
 
         if (!$subProduct) {
             throw new ModelNotFoundException('SubProduct not found.');
         }
+        // Update the product with the new parameters
+        $subProduct->update($params);
 
         return $subProduct;
     }
@@ -197,7 +172,7 @@ class SubProductSV extends BaseService
         if (empty($params['id'])) {
             throw new Exception('SubProduct ID is required.');
         }
-        $params['status'] = $params['status']?? 1;
+        $params['status'] = $params['status'] ?? 1;
         $subProduct = $this->getQuery()->find($id);
 
         if (!$subProduct) {
@@ -262,13 +237,13 @@ class SubProductSV extends BaseService
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 $data->delete();
                 return $data;
             } else {
-                throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
+                throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
             throw new Exception('Query not found');
@@ -288,7 +263,5 @@ class SubProductSV extends BaseService
         } else {
             throw new Exception("SubProduct with ID {$id} not found.");
         }
-
     }
-
 }

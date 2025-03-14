@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class StockDetail extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
     protected $table = "stockdetails";
     protected $fillable = [
         'stock_id',

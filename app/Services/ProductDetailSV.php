@@ -113,6 +113,11 @@ class ProductDetailSV  extends  BaseService
             ];
         }
 
+        // if not have  subproduct not show  all  have subproduct  can  show
+        if (empty($products)) {
+            return [];
+        }
+
         // Return the paginated data and the total count
         return array_values($products);
     }
