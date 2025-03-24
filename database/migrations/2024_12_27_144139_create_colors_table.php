@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::create('colors', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('code')-> nullable();
-            $table->string('description')->nullable();
+            $table->string('name');
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

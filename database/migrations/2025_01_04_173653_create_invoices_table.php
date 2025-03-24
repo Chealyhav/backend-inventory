@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('payment_method')->default('cash');
             $table->enum('payment_status', ['pending', 'paid', 'partially_paid', 'cancelled'])->default('pending');
             $table->decimal('total_amount', 10, 2);
+            $table->integer('payment_id')->nullable();
 
             $table->string('notes')->nullable();
             $table->date('invoice_date')->useCurrent();
