@@ -35,7 +35,7 @@ class ColorSV extends BaseService
         }
 
         // Apply ordering by created_at descending
-        $query->orderBy('created_at', 'desc');
+        $query->orderBy('created_at', 'asc');
 
         // Pagination setup
         $limit = $params['limit'] ?? 10;  // Default to 10 items per page
