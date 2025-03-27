@@ -54,7 +54,7 @@ class SubProductController extends BaseAPI
     }
 
     // Update an existing subproduct
-    public function update($id, SubProductsRequest $request)
+    public function update(Request $request, $id)
     {
         try {
             $params = $request->all();

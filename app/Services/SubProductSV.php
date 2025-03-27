@@ -169,15 +169,11 @@ class SubProductSV extends BaseService
         if (empty($params['color_id'])) {
             throw new Exception('Color ID is required.');
         }
-        if (empty($params['id'])) {
-            throw new Exception('SubProduct ID is required.');
-        }
+
         $params['status'] = $params['status'] ?? 1;
         $subProduct = $this->getQuery()->find($id);
 
-        if (!$subProduct) {
-            throw new ModelNotFoundException('SubProduct not found.');
-        }
+
 
         $subProduct->update($params);
 
