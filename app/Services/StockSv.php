@@ -11,21 +11,10 @@ use App\Services\TelegramBotSV;  // Import the TelegramBotSV service
 class StockSv extends BaseService
 {
 
-    // protected $telegramBot;
-
-    // // Inject the TelegramBotSV service
-    // public function __construct(TelegramBotSV $telegramBot)
-    // {
-    //     $this->telegramBot = $telegramBot;
-    // }
-
     public function getQuery()
     {
         return Stock::query();
     }
-
-
-
 
     /**
      * Create a stock entry
@@ -52,12 +41,12 @@ class StockSv extends BaseService
             // Create a new stock entry
             $stock = $this->getQuery()->create($params);
             DB::table('subproducts')
-            ->where('id', $params['subproduct_id'])
-            ->update([
-                'currentStock' => DB::raw('"currentStock" + ' . (int) $params['stock_in']),
-                'total_weight' => DB::raw('"total_weight" + ' . ((int) $params['stock_in'] * (float) $subproduct->unit_weight)),
-                'stockIn' => DB::raw('"stockIn" + ' . (int) $params['stock_in'])
-            ]);
+                ->where('id', $params['subproduct_id'])
+                ->update([
+                    'currentStock' => DB::raw('"currentStock" + ' . (int) $params['stock_in']),
+                    'total_weight' => DB::raw('"total_weight" + ' . ((int) $params['stock_in'] * (float) $subproduct->unit_weight)),
+                    'stockIn' => DB::raw('"stockIn" + ' . (int) $params['stock_in'])
+                ]);
 
             $telegramService = new TelegramBotSV();
             $messageParams = [
@@ -74,7 +63,7 @@ class StockSv extends BaseService
             throw new Exception('Error creating stock entry: ' . $e->getMessage());
         }
     }
-    //sell the stock - stock will be updated
+    //sell the stock - stock will be updated with stocker information
     public function decrementStock(array $params)
     {
         try {
@@ -82,23 +71,20 @@ class StockSv extends BaseService
             if (!isset($params['subproduct_id']) || !isset($params['stock_out'])) {
                 throw new Exception('Missing required fields for stock entry.');
             }
-
             // Fetch the current stock for the given subproduct_id
             $currentStock = $this->getQuery()->where('subproduct_id', $params['subproduct_id'])->first();
-
             if (!$currentStock) {
                 throw new ModelNotFoundException('Stock not found.');
             }
-
             // Calculate remaining stock after decrement
             $newStock = $currentStock->currentStock - $params['stock_out'];
 
             // Update the stock entry for the given subproduct
             $currentStock->update([
+                'description' => $params['description'] ?? $currentStock->description, // addjust the description for the stock entry for the given subproduct
                 'stock_out' => $currentStock->stock_out + $params['stock_out'],
                 'currentStock' => $newStock,
             ]);
-
             // Update the subproduct's stock in the subproducts table
             DB::table('subproducts')
                 ->where('id', $params['subproduct_id'])
@@ -106,21 +92,16 @@ class StockSv extends BaseService
                     'currentStock' => DB::raw('"currentStock" - ' . $params['stock_out']),
                     'stockOut' => DB::raw('"stockOut" + ' . $params['stock_out']),
                 ]);
-
-
             // Instantiate the TelegramBotSV service to send the notification
             $telegramService = new TelegramBotSV();
-
             // Fetch the subproduct details
             $subproduct = DB::table('subproducts')->where('id', $params['subproduct_id'])->first();
-
             // Prepare the parameters to send to Telegram
             $messageParams = [
                 'action' => 'sale',  // Action changed to 'sale'
-                'product_name' => 'Subproduct ' . ' (' . $subproduct->code . ')',   // Include the code of the subproduct
-                'quantity' => $params['stock_out'],  // Send the stock out (decremented quantity)
+                'product_name' => 'Subproduct ' . ' (' . $subproduct->code . ')',
+                'quantity' => $params['stock_out'],
             ];
-
             // Send the sale alert via TelegramBotSV
             $telegramService->sendTrackerProduct($messageParams);
 
@@ -137,8 +118,7 @@ class StockSv extends BaseService
      *
      * @param array $params
      * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getAllStocks($params = [])
+     */ public function getAllStocks($params = [])
     {
         $query = $this->getQuery()
             ->leftJoin('subproducts', 'stocks.subproduct_id', '=', 'subproducts.id')
@@ -157,16 +137,27 @@ class StockSv extends BaseService
 
         // Apply filters if any
         if (isset($params['product_id'])) {
-            $query->where('products.id', operator: $params['product_id']);
+            $query->where('products.id', $params['product_id']);
         }
         if (isset($params['subproduct_id'])) {
-            $query->where('subproducts.id', operator: $params['subproduct_id']);
+            $query->where('subproducts.id', $params['subproduct_id']);
         }
 
         // Search filter
         if (isset($params['search'])) {
-            $query->where('subproducts.code', 'LIKE', '%' . $params['search'] . '%')
-                ->orWhere('products.product_name', 'LIKE', '%' . $params['search'] . '%');
+            $query->where(function ($q) use ($params) {
+                $q->where('subproducts.code', 'LIKE', '%' . $params['search'] . '%')
+                    ->orWhere('products.product_name', 'LIKE', '%' . $params['search'] . '%');
+            });
+        }
+
+        // Filter by stock type
+        if (isset($params['stock_type'])) {
+            if ($params['stock_type'] === 'in') {
+                $query->where('stocks.stock_in', '>', 0);
+            } elseif ($params['stock_type'] === 'out') {
+                $query->where('stocks.stock_out', '>', 0);
+            }
         }
 
         // Pagination
@@ -177,10 +168,11 @@ class StockSv extends BaseService
         $query->skip($offset)->take($limit);
 
         $results = $query->get();
+        $total = $query->count();
 
         return [
-            'total' => $query->count(),
-            'totalPage' => ceil($query->count() / $limit),
+            'total' => $total,
+            'totalPage' => ceil($total / $limit),
             'nextPage' => $page + 1,
             'prevPage' => $page > 1 ? $page - 1 : null,
             'currentPage' => $page,
@@ -188,6 +180,7 @@ class StockSv extends BaseService
             'data' => $results,
         ];
     }
+
 
 
     /**

@@ -237,14 +237,6 @@ Route::put('/sales/{id}', [SaleController::class, 'update']);
 Route::delete('/sales/{id}', [SaleController::class, 'destroy']);
 
 
-
-
-
-
-
-
-
-
 Route::get('/sale_details', [SaleDetailController::class, 'index']);
 Route::post('/sale_details', [SaleDetailController::class, 'store']);
 Route::get('/sale_details/{id}', [SaleDetailController::class, 'show']);
