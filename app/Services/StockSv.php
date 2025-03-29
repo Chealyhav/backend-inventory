@@ -67,50 +67,82 @@ class StockSv extends BaseService
     public function decrementStock(array $params)
     {
         try {
-            // Ensure required parameters are provided
-            if (!isset($params['subproduct_id']) || !isset($params['stock_out'])) {
-                throw new Exception('Missing required fields for stock entry.');
+            // Step 1: Validate required parameters
+            if (!isset($params['subproduct_id'], $params['stock_out'])) {
+                throw new Exception('Missing required fields: subproduct_id or stock_out.');
             }
-            // Fetch the current stock for the given subproduct_id
-            $currentStock = $this->getQuery()->where('subproduct_id', $params['subproduct_id'])->first();
-            if (!$currentStock) {
-                throw new ModelNotFoundException('Stock not found.');
-            }
-            // Calculate remaining stock after decrement
-            $newStock = $currentStock->currentStock - $params['stock_out'];
 
-            // Update the stock entry for the given subproduct
-            $currentStock->update([
-                'description' => $params['description'] ?? $currentStock->description, // addjust the description for the stock entry for the given subproduct
-                'stock_out' => $currentStock->stock_out + $params['stock_out'],
+            // Ensure stock_out is a positive number
+            if ($params['stock_out'] <= 0) {
+                throw new Exception('Stock out quantity must be greater than zero.');
+            }
+
+            // Step 2: Fetch the current stock for the given subproduct_id
+            $subproduct = DB::table('subproducts')->where('id', $params['subproduct_id'])->first();
+
+            if (!$subproduct) {
+                throw new ModelNotFoundException('Subproduct not found.');
+            }
+
+            // Step 3: Validate sufficient stock availability
+            if ($subproduct->currentStock < $params['stock_out']) {
+                throw new Exception('Insufficient stock available for the requested operation.');
+            }
+
+            // Step 4: Calculate remaining stock after decrement
+            $newStock = $subproduct->currentStock - $params['stock_out'];
+
+            // Default for stock_out if not set, and default stock_date if not set
+            $params['stock_in'] = $params['stock_in'] ?? 0;
+            // Step 5: Create a new stock entry for the given subproduct
+            $stockEntry = $this->getQuery()->create([
+                'subproduct_id' => $params['subproduct_id'],
+                'description' => $params['description'] ?? 'Stock adjustment',
+                'stock_out' => $params['stock_out'],
                 'currentStock' => $newStock,
+                'stock_in' => $params['stock_in'],
             ]);
-            // Update the subproduct's stock in the subproducts table
+
+            if (!$stockEntry) {
+                throw new Exception('Failed to create new stock entry.');
+            }
+
+            // Step 6: Update the subproduct's stock in the subproducts table
             DB::table('subproducts')
                 ->where('id', $params['subproduct_id'])
                 ->update([
-                    'currentStock' => DB::raw('"currentStock" - ' . $params['stock_out']),
-                    'stockOut' => DB::raw('"stockOut" + ' . $params['stock_out']),
+                    'currentStock' => DB::raw('"subproducts"."currentStock" - ' . (int)$params['stock_out']),
+                    'stockOut' => DB::raw('"subproducts"."stockOut" + ' . (int)$params['stock_out']),
                 ]);
-            // Instantiate the TelegramBotSV service to send the notification
+
+            // Step 7: Send a Telegram notification (optional)
             $telegramService = new TelegramBotSV();
-            // Fetch the subproduct details
-            $subproduct = DB::table('subproducts')->where('id', $params['subproduct_id'])->first();
-            // Prepare the parameters to send to Telegram
+
+            // Check if stock is low and send a notification
+            if ($newStock <= 4) {
+                $messageParams = [
+                    'action' => 'checkStock',
+                    'product_name' => 'Subproduct (' . $subproduct->code . ')',
+                    'quantity' => $params['stock_out'],
+                ];
+                $telegramService->sendTrackerProduct($messageParams);
+            }
+            // Step 8: notification for stock added
+            // Check if stock is added and send a notification
             $messageParams = [
-                'action' => 'sale',  // Action changed to 'sale'
+                'action' => 'adjust_stock',
                 'product_name' => 'Subproduct ' . ' (' . $subproduct->code . ')',
-                'quantity' => $params['stock_out'],
+                'quantity' => $params['stock_in'],
             ];
-            // Send the sale alert via TelegramBotSV
+
+            // Send the message using the TelegramBotSV service
             $telegramService->sendTrackerProduct($messageParams);
 
-            return $currentStock;
+            return $stockEntry;
         } catch (Exception $e) {
             throw new Exception('Error decrementing stock: ' . $e->getMessage());
         }
     }
-
 
 
     /**
@@ -131,9 +163,11 @@ class StockSv extends BaseService
                 'stocks.created_at',
                 'stocks.updated_at',
                 'subproducts.code as subproduct_code',
-                'products.product_name'
+                'products.product_name',
+                'stocks.description'
+
             )
-            ->orderBy('stocks.created_at', 'desc');
+            ->orderBy('stocks.created_at', 'asc');
 
         // Apply filters if any
         if (isset($params['product_id'])) {

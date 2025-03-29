@@ -70,22 +70,6 @@ class SubProductSV extends BaseService
             $query->where('sub_category.id', $params['sub_category_id']);
         }
 
-
-
-        // Pagination setup
-        // $limit = $params['limit'] ?? 10;
-        // $page = $params['page'] ?? 1;
-        // $offset = ($page - 1) * $limit;
-
-        // Apply ordering
-        // $orderBy = $params['order_by'] ?? 'subproducts.created_at';
-        // $order = $params['order'] ?? 'asc';
-        // $query->orderBy($orderBy, $order);
-
-        // Count total records for pagination
-        $total = $query->count();
-
-
         $result = $query->get();
         if (!$result) {
             throw new Exception('SubProduct not found.');
@@ -147,9 +131,6 @@ class SubProductSV extends BaseService
             throw new Exception('Product ID is required.');
         }
 
-        // if (empty($params['color_id'])) {
-        //     throw new Exception('Color ID is required.');
-        // }
         $params['status'] = $params['status'] ?? 1;
         $subProduct = $this->getQuery()->create($params);
 
@@ -166,14 +147,9 @@ class SubProductSV extends BaseService
         if (empty($params['product_id'])) {
             throw new Exception('Product ID is required.');
         }
-        if (empty($params['color_id'])) {
-            throw new Exception('Color ID is required.');
-        }
 
         $params['status'] = $params['status'] ?? 1;
         $subProduct = $this->getQuery()->find($id);
-
-
 
         $subProduct->update($params);
 

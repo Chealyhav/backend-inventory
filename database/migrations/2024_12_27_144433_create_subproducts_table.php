@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subproducts', function (Blueprint $table) {
-            $table->id(); // auto-incrementing ID column
+            $table->id();
             $table->string('code')->unique();
             $table->integer('pieces')->nullable();
             $table->float('thickness')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('sale_price', 10, 2)->nullable();
             $table->decimal('buy_price', 10, 2)->nullable();
             $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('color_id');
+            $table->unsignedBigInteger('color_id')->nullable();
             $table->decimal('discount', 10, 2)->default(0);
             $table->decimal('currentStock')->default(0);
             $table->decimal('stockOut')->default(0);
@@ -32,6 +32,7 @@ return new class extends Migration
             // Foreign key constraints
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');
+
 
             $table->boolean('status')->default(1);
             $table->boolean('remark')->default(1); // 1 = PreOrder, 2 = InStock
