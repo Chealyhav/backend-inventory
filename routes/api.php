@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\Api\v1\RoleController;
 use App\Http\Controllers\Api\v1\CloudinaryController;
 use App\Http\Controllers\Api\v1\ProductExportController;
+use App\Http\Controllers\Api\v1\CustomerController;
 
 
 
@@ -29,6 +30,12 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::put('/users/{id}', [UserController::class, 'update']);
+
+    // Route::get('/customers', [CustomerController::class, 'index']);
+    // Route::post('/customers', [CustomerController::class, 'store']);
+    // Route::get('/customers/{id}', [CustomerController::class, 'show']);
+    // Route::put('/customers/{id}', [CustomerController::class, 'update']);
+    // Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
 
     //   // Create a new sale
     //   Route::post('/sales', [SaleController::class, 'store']);
@@ -133,9 +140,11 @@ Route::get('/export-products-pdf', [ProductExportController::class, 'exportPdf']
 
 
 
-
-
-
+Route::get('/customers', [CustomerController::class, 'index']);
+Route::post('/customers', [CustomerController::class, 'store']);
+Route::get('/customers/{id}', [CustomerController::class, 'show']);
+Route::put('/customers/{id}', [CustomerController::class, 'update']);
+Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
 
 
 // //test route

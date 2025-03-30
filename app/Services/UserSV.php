@@ -78,8 +78,8 @@ class UserSV extends BaseService
         $page = $params['page'] ?? 1;
         $offset = ($page - 1) * $limit;
         $totalPage = ceil($total / $limit);
-        $nextPage = $page < $totalPage ? $page + 1 : null;
-        $prevPage = $page > 1 ? $page - 1 : null;
+        $nextPage = $page < $totalPage ? $page + 1 : 0;
+        $prevPage = $page > 1 ? $page - 1 : 0;
 
         $users = $query->offset($offset)->limit($limit)->get();
 
