@@ -84,7 +84,7 @@ class CustomerSV extends BaseService
 
     public function getCustomerById($id)
     {
-        return Customer::find($id);
+        return $this->getQuery()->find($id);
     }
 
     public function customerCreate(array $params = [])
@@ -99,6 +99,7 @@ class CustomerSV extends BaseService
         }
         if (empty($params['phone_number'])) {
             throw new \InvalidArgumentException('Phone number is required.');
+
         }
         $customer = $query->create([
             'name' => data_get($params, 'name'),
@@ -111,6 +112,15 @@ class CustomerSV extends BaseService
 
         return $customer;
     }
+
+/**
+ * Update a customer's information.
+ *
+ * @param int $id The ID of the customer to update.
+ * @param array $params The new attributes for the customer.
+ * @return \App\Models\Customer The updated customer model.
+ * @throws ModelNotFoundException If no customer is found with the given ID.
+ */
 
     public function customerUpdate($id, array $params = [])
     {
