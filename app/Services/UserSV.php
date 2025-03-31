@@ -62,9 +62,9 @@ class UserSV extends BaseService
             }
         }
         // Sorting
-        if (!empty($params['order_by'])) {
-            $query->orderBy($params['order_by'], $params['order_direction'] ?? 'asc');
-        }
+        // if (!empty($params['order_by'])) {
+        //     $query->orderBy($params['order_by'] ?? 'u.created_at', $params['order'] ?? 'asc');
+        // }
         //role_id is
         if (!empty($params['role_id'])) {
             $query->where('u.role_id', $params['role_id']);

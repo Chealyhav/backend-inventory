@@ -20,6 +20,7 @@ class Stock extends Model
         'stock',
         'stock_date',
         'subproduct_id',
+        'description',
         'status',
         'deleted_by',
         'updated_by',
