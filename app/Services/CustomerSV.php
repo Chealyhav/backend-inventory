@@ -48,13 +48,6 @@ class CustomerSV extends BaseService
             });
         }
 
-        // Apply filters
-        if (!empty($params['filter_by']) && is_array($params['filter_by'])) {
-            foreach ($params['filter_by'] as $column => $value) {
-                $query->where("c.$column", $value);
-            }
-        }
-
         // Status filter
         if (!empty($params['status'])) {
             $query->where('c.status', $params['status']);
@@ -62,7 +55,7 @@ class CustomerSV extends BaseService
 
         // Sorting
         if (!empty($params['order_by'])) {
-            $query->orderBy($params['order_by'], $params['order_direction'] ?? 'asc');
+            $query->orderBy($params['order_by'], $params['c.created_a'] ?? 'asc');
         }
 
         // Get total count before pagination

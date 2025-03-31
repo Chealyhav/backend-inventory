@@ -54,6 +54,7 @@ abstract class BaseService
                 throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
+
             throw new Exception('Query not found');
         }
     }
@@ -95,9 +96,9 @@ abstract class BaseService
     {
         $query = $this->getQuery();
 
-        $limit = $params['limit'] ?? 10;
-        $page = $params['page'] ?? 1;
-        $orderBy = $params['order_by'] ?? 'asc';
+        $limit = $params['limit'] ?? 10; // default limit row
+        $page = $params['page'] ?? 1; // default page number
+        $orderBy = $params['order_by'] ?? 'asc'; 
         $filterBy = $params['filter_by'] ?? null;
         $search = $params['search'] ?? null;
         $columns = $params['columns'] ?? null;
