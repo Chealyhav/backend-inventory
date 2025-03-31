@@ -36,7 +36,6 @@ class CustomerSV extends BaseService
                 'c.deleted_at',
                 'c.status'
             );
-
         // Search functionality
         if (!empty($params['search'])) {
             $searchTerm = '%' . $params['search'] . '%';

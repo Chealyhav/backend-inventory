@@ -61,7 +61,7 @@ class CustomerController extends BaseAPI
         try {
             $data = $this->customer->customerDelete($id);
             return $this->successResponse($data, 'Customer deleted successfully');
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
