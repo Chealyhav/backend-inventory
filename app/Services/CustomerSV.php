@@ -48,9 +48,45 @@ class CustomerSV extends BaseService
         }
 
         // Status filter
-        if (!empty($params['status'])) {
-            $query->where('c.status', $params['status']);
+        // if (!empty($params['status'])) {
+        //     $query->where('c.status', $params['status']);
+        // }
+
+        
+        // Get status parameter (works for Laravel or plain PHP)
+        $status = $_GET['status'] ?? null; // For plain PHP
+        // $status = $request->input('status'); // For Laravel
+
+        // Apply status filter
+        if (!empty($status)) {
+            // Convert to boolean
+            $statusBool = filter_var($status, FILTER_VALIDATE_BOOLEAN);
+            $query->where('c.status', $statusBool);
+        } else {
+            // Default to active customers
+            $query->where('c.status', true);
         }
+
+        // Execute query
+        $customers = $query->get();
+
+        // Handle response
+        if ($customers->isEmpty()) {
+            $message = !empty($status) 
+                ? 'No ' . ($statusBool ? 'active' : 'inactive') . ' customers found'
+                : 'No active customers found';
+            
+            return [
+                'status' => 'error',
+                'message' => $message,
+                'data' => []
+            ];
+        }
+
+        return [
+            'status' => 'success',
+            'data' => $customers
+        ];
 
         // Sorting
         if (!empty($params['order_by'])) {
