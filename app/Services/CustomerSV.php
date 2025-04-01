@@ -81,10 +81,40 @@ class CustomerSV extends BaseService
         ];
     }
 
+    /**
+     * Retrieve a customer by its ID.
+     *
+     * @param int $id The ID of the customer to retrieve.
+     *
+     * @return \App\Models\Customer|null The customer model if found, otherwise null.
+     */
     public function getCustomerById($id)
     {
-        return $this->getQuery()->find($id);
+        $customer = $this->getQuery()->find($id);
+    
+        if (!$customer) {
+            throw new \RuntimeException("Customer with ID {$id} not found");
+        }
+    
+        return $customer;
     }
+
+    /**
+     * Create a new customer.
+     *
+     * This function creates a new customer record in the database using the provided parameters.
+     * The 'name', 'company_name', and 'phone_number' fields are required.
+     *
+     * @param array $params An associative array containing customer attributes:
+     *                      - 'name' (string): The name of the customer. Required.
+     *                      - 'company_name' (string): The company name of the customer. Required.
+     *                      - 'email' (string): The email address of the customer. Optional.
+     *                      - 'phone_number' (string): The phone number of the customer. Required.
+     *                      - 'address' (string): The address of the customer. Optional.
+     *                      - 'status' (bool): The status of the customer. Defaults to true.
+     * @return \App\Models\Customer The created customer model.
+     * @throws \InvalidArgumentException If required fields are missing.
+     */
 
     public function customerCreate(array $params = [])
     {
