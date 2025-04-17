@@ -41,70 +41,28 @@ class CustomerSV extends BaseService
             $searchTerm = '%' . $params['search'] . '%';
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('c.name', 'LIKE', $searchTerm)
-                    ->orWhere('c.company_name', 'LIKE', $searchTerm)
-                    ->orWhere('c.email', 'LIKE', $searchTerm)
-                    ->orWhere('c.phone_number', 'LIKE', $searchTerm);
+                    ->orWhere('c.company_name', 'LIKE', $searchTerm);
             });
         }
 
-        // Status filter
-        // if (!empty($params['status'])) {
-        //     $query->where('c.status', $params['status']);
-        // }
-
-        
-        // Get status parameter (works for Laravel or plain PHP)
-        $status = $_GET['status'] ?? null; // For plain PHP
-        // $status = $request->input('status'); // For Laravel
-
-        // Apply status filter
-        if (!empty($status)) {
-            // Convert to boolean
-            $statusBool = filter_var($status, FILTER_VALIDATE_BOOLEAN);
-            $query->where('c.status', $statusBool);
-        } else {
-            // Default to active customers
-            $query->where('c.status', true);
+        //Status filter
+        if (!empty($params['status'])) {
+            $query->where('c.status', $params['status']);
         }
-
-        // Execute query
-        $customers = $query->get();
-
-        // Handle response
-        if ($customers->isEmpty()) {
-            $message = !empty($status) 
-                ? 'No ' . ($statusBool ? 'active' : 'inactive') . ' customers found'
-                : 'No active customers found';
-            
-            return [
-                'status' => 'error',
-                'message' => $message,
-                'data' => []
-            ];
-        }
-
-        return [
-            'status' => 'success',
-            'data' => $customers
-        ];
 
         // Sorting
         if (!empty($params['order_by'])) {
             $query->orderBy($params['order_by'], $params['c.created_a'] ?? 'asc');
         }
-
-        // Get total count before pagination
+        //pagination
         $total = $query->count();
-
-        // Pagination
         $limit = $params['limit'] ?? 10;
         $page = $params['page'] ?? 1;
-        $offset = ($page - 1) * $limit;
         $totalPage = ceil($total / $limit);
-        $nextPage = $page < $totalPage ? $page + 1 : 0;
-        $prevPage = $page > 1 ? $page - 1 : 0;
+        $nextPage = $page + 1 ?? 0;
+        $prevPage = $page - 1 ?? 0;
 
-        $customers = $query->offset($offset)->limit($limit)->get();
+        $customers = $query->get();
 
         return [
             'total' => $total,
@@ -127,11 +85,11 @@ class CustomerSV extends BaseService
     public function getCustomerById($id)
     {
         $customer = $this->getQuery()->find($id);
-    
+
         if (!$customer) {
             throw new \RuntimeException("Customer with ID {$id} not found");
         }
-    
+
         return $customer;
     }
 
@@ -160,11 +118,9 @@ class CustomerSV extends BaseService
         }
         if (empty($params['company_name'])) {
             throw new \InvalidArgumentException('Company name is required.');
-        
         }
         if (empty($params['phone_number'])) {
             throw new \InvalidArgumentException('Phone number is required.');
-
         }
         $customer = $query->create([
             'name' => data_get($params, 'name'),
@@ -178,14 +134,14 @@ class CustomerSV extends BaseService
         return $customer;
     }
 
-/**
- * Update a customer's information.
- *
- * @param int $id The ID of the customer to update.
- * @param array $params The new attributes for the customer.
- * @return \App\Models\Customer The updated customer model.
- * @throws ModelNotFoundException If no customer is found with the given ID.
- */
+    /**
+     * Update a customer's information.
+     *
+     * @param int $id The ID of the customer to update.
+     * @param array $params The new attributes for the customer.
+     * @return \App\Models\Customer The updated customer model.
+     * @throws ModelNotFoundException If no customer is found with the given ID.
+     */
 
     public function customerUpdate($id, array $params = [])
     {
