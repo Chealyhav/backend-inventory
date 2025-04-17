@@ -14,8 +14,9 @@ use App\Http\Controllers\Api\v1\SaleDetailController;
 use App\Http\Controllers\Api\v1\StockController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\Api\v1\RoleController;
-use App\Http\Controllers\Api\v1\CloudinaryController;
-use App\Http\Controllers\Api\v1\ProductExportController;
+use App\Http\Controllers\Api\CloudinaryController;
+use App\Http\Controllers\Api\ProductExportController;
+use App\Http\Controllers\Api\ExportController;
 
 
 
@@ -128,8 +129,10 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/telegram_bot', [TelegramController::class, 'index']);
 });
 
-Route::get('/export-products-excel', [ProductExportController::class, 'exportExcel']);
-Route::get('/export-products-pdf', [ProductExportController::class, 'exportPdf']);
+Route::prefix('exports')->group(function () {
+    Route::post('pdf', [ExportController::class, 'exportPDF']);
+    Route::post('excel', [ExportController::class, 'exportExcel']);
+});
 
 
 
