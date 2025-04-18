@@ -108,15 +108,28 @@ class CustomerSV extends BaseService
             $query->orderBy($params['order_by'], $params['c.created_a'] ?? 'asc');
         }
 
-        // Get total count before pagination
+        // Pagination count
         $total = $query->count();
+
+        // Pagination
         $limit = $params['limit'] ?? 10;
         $page = $params['page'] ?? 1;
+        $offset = ($page - 1) * $limit;
         $totalPage = ceil($total / $limit);
-        $nextPage = $page + 1 ?? 0;
-        $prevPage = $page - 1 ?? 0;
+        $nextPage = $page < $totalPage ? $page + 1 : 0;
+        $prevPage = $page > 1 ? $page - 1 : 0;
 
-        $customers = $query->offset($offset)->limit($limit)->get();
+        $data = $query->offset($offset)->limit($limit)->get();
+
+        // //pagination
+        // $total = $query->count();
+        // $limit = $params['limit'] ?? 10;
+        // $page = $params['page'] ?? 1;
+        // $totalPage = ceil($total / $limit);
+        // $nextPage = $page + 1 ?? 0;
+        // $prevPage = $page - 1 ?? 0;
+
+        $customers = $query->get();
 
         return [
             'total' => $total,
@@ -129,54 +142,12 @@ class CustomerSV extends BaseService
         ];
     }
 
-    /**
-     * Retrieve a customer by its ID.
-     *
-     * @param int $id The ID of the customer to retrieve.
-     *
-     * @return \App\Models\Customer|null The customer model if found, otherwise null.
-     */
-    public function getCustomerById($id)
-    {
-        $customer = $this->getQuery()->find($id);
-    
-        if (!$customer) {
-            throw new \RuntimeException("Customer with ID {$id} not found");
-        }
-    
-        return $customer;
-    }
-
-    /**
-     * Create a new customer.
-     *
-     * This function creates a new customer record in the database using the provided parameters.
-     * The 'name', 'company_name', and 'phone_number' fields are required.
-     *
-     * @param array $params An associative array containing customer attributes:
-     *                      - 'name' (string): The name of the customer. Required.
-     *                      - 'company_name' (string): The company name of the customer. Required.
-     *                      - 'email' (string): The email address of the customer. Optional.
-     *                      - 'phone_number' (string): The phone number of the customer. Required.
-     *                      - 'address' (string): The address of the customer. Optional.
-     *                      - 'status' (bool): The status of the customer. Defaults to true.
-     * @return \App\Models\Customer The created customer model.
-     * @throws \InvalidArgumentException If required fields are missing.
-     */
-
     public function customerCreate(array $params = [])
     {
         $query = $this->getQuery();
-        if (empty($params['name'])) {
-            throw new \InvalidArgumentException('Name is required.');
-        }
-        if (empty($params['company_name'])) {
-            throw new \InvalidArgumentException('Company name is required.');
-        
-        }
-        if (empty($params['phone_number'])) {
-            throw new \InvalidArgumentException('Phone number is required.');
 
+        if (!isset($params['name'], $params['company_name'], $params['phone_number'])) {
+            throw new \InvalidArgumentException('Name, Company name, and Phone number are required.');
         }
 
         $data = $query->create([
@@ -189,17 +160,8 @@ class CustomerSV extends BaseService
             'status' => $params['status'] ?? true,
         ]);
 
-        return $customer;
+        return $data;
     }
-
-/**
- * Update a customer's information.
- *
- * @param int $id The ID of the customer to update.
- * @param array $params The new attributes for the customer.
- * @return \App\Models\Customer The updated customer model.
- * @throws ModelNotFoundException If no customer is found with the given ID.
- */
 
     public function customerUpdate($id, array $params = [])
     {
