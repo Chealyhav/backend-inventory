@@ -15,64 +15,6 @@ class CustomerSV extends BaseService
         return Customer::query();
     }
 
-    // public function getAllCustomers($params = [])
-    // {
-    //     $query = $this->getQuery()->from('customers as c');
-
-    //     // Search filter
-    //     if (!empty($params['search'])) {
-    //         $searchTerm = '%' . $params['search'] . '%';
-    //         $query->where(function ($q) use ($searchTerm) {
-    //             $q->where('c.name', 'LIKE', $searchTerm)
-    //                 ->orWhere('c.company_name', 'LIKE', $searchTerm)
-    //                 ->orWhere('c.email', 'LIKE', $searchTerm)
-    //                 ->orWhere('c.phone_number', 'LIKE', $searchTerm);
-    //         });
-    //     }
-
-    //     // Gender filter
-    //     if (!empty($params['gender'])) {
-    //         $query->where('c.gender', $params['gender']);
-    //     }
-
-    //     // Status filter - only apply if status is explicitly provided
-    //     if (isset($params['status'])) {
-    //         // Handle string 'true'/'false' or boolean true/false
-    //         $status = is_string($params['status']) 
-    //             ? filter_var($params['status'], FILTER_VALIDATE_BOOLEAN)
-    //             : (bool)$params['status'];
-    //         $query->where('c.status', $status);
-    //     }
-
-    //     // Sorting
-    //     if (!empty($params['order_by'])) {
-    //         $query->orderBy($params['order_by'], $params['order'] ?? 'asc');
-    //     }
-
-    //     // Pagination count
-    //     $total = $query->count();
-
-    //     // Pagination
-    //     $limit = $params['limit'] ?? 10;
-    //     $page = $params['page'] ?? 1;
-    //     $offset = ($page - 1) * $limit;
-    //     $totalPage = ceil($total / $limit);
-    //     $nextPage = $page < $totalPage ? $page + 1 : 0;
-    //     $prevPage = $page > 1 ? $page - 1 : 0;
-
-    //     $data = $query->offset($offset)->limit($limit)->get();
-
-    //     return [
-    //         'total' => $total,
-    //         'totalPage' => $totalPage,
-    //         'nextPage' => $nextPage,
-    //         'prevPage' => $prevPage,
-    //         'currentPage' => $page,
-    //         'limit' => $limit,
-    //         'data' => $data,
-    //     ];
-    // }
-
     public function getAllCustomers($params = [])
     {
         $query = DB::table('customers as c')
@@ -120,14 +62,6 @@ class CustomerSV extends BaseService
         $prevPage = $page > 1 ? $page - 1 : 0;
 
         $data = $query->offset($offset)->limit($limit)->get();
-
-        // //pagination
-        // $total = $query->count();
-        // $limit = $params['limit'] ?? 10;
-        // $page = $params['page'] ?? 1;
-        // $totalPage = ceil($total / $limit);
-        // $nextPage = $page + 1 ?? 0;
-        // $prevPage = $page - 1 ?? 0;
 
         $customers = $query->get();
 
