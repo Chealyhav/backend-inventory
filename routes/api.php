@@ -14,9 +14,10 @@ use App\Http\Controllers\Api\v1\SaleDetailController;
 use App\Http\Controllers\Api\v1\StockController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\Api\v1\RoleController;
-use App\Http\Controllers\Api\CloudinaryController;
-use App\Http\Controllers\Api\ProductExportController;
-use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\v1\CloudinaryController;
+use App\Http\Controllers\Api\v1\ProductExportController;
+use App\Http\Controllers\Api\v1\CustomerController;
+
 
 
 
@@ -30,6 +31,12 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::put('/users/{id}', [UserController::class, 'update']);
+
+    // Route::get('/customers', [CustomerController::class, 'index']);
+    // Route::post('/customers', [CustomerController::class, 'store']);
+    // Route::get('/customers/{id}', [CustomerController::class, 'show']);
+    // Route::put('/customers/{id}', [CustomerController::class, 'update']);
+    // Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
 
     //   // Create a new sale
     //   Route::post('/sales', [SaleController::class, 'store']);
@@ -129,22 +136,16 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/telegram_bot', [TelegramController::class, 'index']);
 });
 
-Route::prefix('exports')->group(function () {
-    Route::post('pdf', [ExportController::class, 'exportPDF']);
-    Route::post('excel', [ExportController::class, 'exportExcel']);
-});
 
 
 
+Route::get('/customers', [CustomerController::class, 'index']);
+Route::post('/customers', [CustomerController::class, 'store']);
+Route::get('/customers/{id}', [CustomerController::class, 'show']);
+Route::put('/customers/{id}', [CustomerController::class, 'update']);
+Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
 
 
-
-
-
-// //test route
-// Route::get('/test', function () {
-//     return response()->json(['message' => 'Test route is working!']);
-// });
 
 //Login and Register
 Route::post('/logout', [AuthController::class, 'logout']);

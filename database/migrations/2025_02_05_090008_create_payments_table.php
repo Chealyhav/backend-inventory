@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->integer('invoice_id');
+            $table->integer('customer_id');
             $table->decimal('amount_paid', 10, 2);
             $table->string('payment_reference')->nullable();
             $table->string('payment_method')->default('cash');
