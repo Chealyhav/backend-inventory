@@ -1,96 +1,60 @@
-# stage 1: build stage
+# ======================
+# Stage 1: Build Stage
+# ======================
 FROM php:8.2-fpm-alpine AS build
 
-# Installing system dependencies and PHP extensions
+# Install PHP dependencies
 RUN apk add --no-cache \
-    zip \
-    libzip-dev \
-    freetype \
-    libjpeg-turbo \
-    libpng \
-    freetype-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    nodejs \
-    npm \
-    postgresql-dev \
+    zip libzip-dev freetype freetype-dev libjpeg-turbo libjpeg-turbo-dev libpng libpng-dev \
+    nodejs npm postgresql-dev \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip pdo pdo_mysql pdo_pgsql \
-    && docker-php-ext-enable pdo_pgsql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Install composer
+# Install Composer
 COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
 
+# Set working directory
 WORKDIR /var/www/html
 
-# Copy necessary files and change permissions
+# Copy project files
 COPY . .
+
+# Permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache
 
-# Install PHP and Node.js dependencies
-RUN composer install --no-dev --prefer-dist \
-    && npm install \
-    && npm run build
+# Install PHP and Node dependencies
+RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader \
+    && npm install && npm run build
 
-RUN chown -R www-data:www-data /var/www/html/vendor \
-    && chmod -R 775 /var/www/html/vendor
+# ======================
+# Stage 2: Production
+# ======================
+FROM php:8.2-fpm-alpine AS production
 
-# stage 2: production stage
-FROM php:8.3-fpm-alpine
-
-# Install system dependencies, including NGINX and PostgreSQL extensions
+# Install system dependencies
 RUN apk add --no-cache \
-    zip \
-    libzip-dev \
-    freetype \
-    libjpeg-turbo \
-    libpng \
-    freetype-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    oniguruma-dev \
-    gettext-dev \
-    nginx \
-    postgresql-dev \
-    bash \
-    postgresql-client \
+    zip libzip-dev freetype freetype-dev libjpeg-turbo libjpeg-turbo-dev libpng libpng-dev \
+    oniguruma-dev gettext-dev postgresql-dev bash postgresql-client \
     && docker-php-ext-configure zip \
-    && docker-php-ext-install zip pdo pdo_mysql pdo_pgsql \
-    && docker-php-ext-enable pdo_pgsql \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-enable gd \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-enable bcmath \
-    && docker-php-ext-install exif \
-    && docker-php-ext-enable exif \
-    && docker-php-ext-install gettext \
-    && docker-php-ext-enable gettext \
-    && docker-php-ext-install opcache \
-    && docker-php-ext-enable opcache \
-    && rm -rf /var/cache/apk/*
+    && docker-php-ext-install zip pdo pdo_mysql pdo_pgsql bcmath exif gettext opcache \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Copy files from the build stage
+# Copy built application from build stage
 COPY --from=build /var/www/html /var/www/html
-COPY ./nginx.conf /etc/nginx/http.d/default.conf
 
+# Set working directory
 WORKDIR /var/www/html
 
-# Add all folders where files are being stored that require persistence (if needed).
-VOLUME ["/var/www/html/storage/app"]
-
-# # Auto-migrate and run services (nginx and php-fpm)
-# CMD ["sh", "-c", "until pg_isready -h $DB_HOST -U $DB_USERNAME -d $DB_DATABASE; do echo 'Waiting for database...'; sleep 2; done; echo 'Database is ready. Running migrations...'; php artisan migrate --force; nginx -g 'daemon off;' & php-fpm -F"]
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html
 
 
+# Expose port used by PHP-FPM
+EXPOSE 9000
 
-# Auto-migrate and run services (nginx and php-fpm)
-CMD ["sh", "-c", "nginx && php-fpm"]
-
-
-
+# Run PHP-FPM
+CMD ["php-fpm"]
