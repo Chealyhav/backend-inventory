@@ -14,6 +14,8 @@ use App\Models\Color;
 class ColorSV extends BaseService
 {
 
+
+    //hypothetical function to get the query builder instance
     public function getQuery()
     {
         return Color::query();

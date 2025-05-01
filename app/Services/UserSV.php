@@ -61,10 +61,10 @@ class UserSV extends BaseService
                 $query->where("u.$column", $value);
             }
         }
-        // Sorting
-        // if (!empty($params['order_by'])) {
-        //     $query->orderBy($params['order_by'] ?? 'u.created_at', $params['order'] ?? 'asc');
-        // }
+        //Sorting
+        if (!empty($params['order_by'])) {
+            $query->orderBy($params['order_by'] ?? 'u.created_at', $params['order'] ?? 'asc');
+        }
         //role_id is
         if (!empty($params['role_id'])) {
             $query->where('u.role_id', $params['role_id']);
@@ -78,8 +78,8 @@ class UserSV extends BaseService
         $page = $params['page'] ?? 1;
         $offset = ($page - 1) * $limit;
         $totalPage = ceil($total / $limit);
-        $nextPage = $page < $totalPage ? $page + 1 : null;
-        $prevPage = $page > 1 ? $page - 1 : null;
+        $nextPage = $page < $totalPage ? $page + 1 : 0;
+        $prevPage = $page > 1 ? $page - 1 : 0;
 
         $users = $query->offset($offset)->limit($limit)->get();
 
