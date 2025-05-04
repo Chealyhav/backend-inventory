@@ -47,13 +47,13 @@ class CustomerSV extends BaseService
 
         // Sorting
         if (!empty($params['order_by'])) {
-            $query->orderBy($params['order_by'], $params['c.created_a'] ?? 'asc');
+            $query->orderBy($params['order_by'], $params['c.created_at'] ?? 'asc');
         }
 
         // Pagination count
         $total = $query->count();
 
-        // Pagination
+        // Pagination   
         $limit = $params['limit'] ?? 10;
         $page = $params['page'] ?? 1;
         $offset = ($page - 1) * $limit;

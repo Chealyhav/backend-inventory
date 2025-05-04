@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('company_name')->nullable();
             $table->string('vat_number')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
        
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

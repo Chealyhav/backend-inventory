@@ -142,6 +142,9 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     ############# dashboard management ######################
     //dashboard for sale management
 
+
+
+
     //report management
     Route::post('/telegram_bot', [TelegramController::class, 'index']);
     //upload Image to cloudinary
@@ -150,11 +153,11 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
 });
 
-
 Route::get('/customers', [CustomerController::class, 'index']);
 Route::post('/customers', [CustomerController::class, 'store']);
 Route::put('/customers/{id}', [CustomerController::class, 'update']);
 Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
+
 
 //Login and Register
 Route::post('/logout', [AuthController::class, 'logout']);
@@ -167,81 +170,3 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 
 
-
-Route::get('/users', [UserController::class, 'index']);
-Route::post('/users', [UserController::class, 'store']);
-Route::get('/users/{id}', [UserController::class, 'show']);
-Route::put('/users/{id}', [UserController::class, 'update']);
-
-
-Route::post('/upload', [CloudinaryController::class, 'uploadImage']);
-Route::delete('/delete', [CloudinaryController::class, 'deleteImage']);
-Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
-
-Route::get('/roles', [RoleController::class, 'index']);
-Route::post('/roles', [RoleController::class, 'store']);
-Route::put('/roles/{id}', [RoleController::class, 'update']);
-Route::delete('/roles/{id}', [RoleController::class, 'destroy']);
-
-
-
-
-Route::get('/colors', [ColorController::class, 'index']);
-Route::post('/colors', [ColorController::class, 'store']);
-Route::put('/colors/{id}', [ColorController::class, 'update']);
-Route::delete('/colors/{id}', [ColorController::class, 'destroy']);
-Route::delete('colors/{id}/restore', [ColorController::class, 'restore']);
-
-Route::get('/products', [ProductController::class, 'index']);
-Route::post('/products', [ProductController::class, 'store']);
-Route::post('/products/{id}', [ProductController::class, 'update']);
-Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-
-
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::post('/categories', [CategoryController::class, 'store']);
-Route::put('/categories/{id}', [CategoryController::class, 'update']);
-Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore']); // Restore a category
-Route::delete('/categories/{id}/force', [CategoryController::class, 'forceDelete']); // Permanently delete a category
-
-
-
-Route::get('/subcategories', [SubCategoryController::class, 'index']);
-Route::post('/subcategories', [SubCategoryController::class, 'store']);
-Route::put('/subcategories/{id}', [SubCategoryController::class, 'update']);
-Route::delete('/subcategories/{id}', [SubCategoryController::class, 'destroy']);
-Route::post('subcategories/{id}/restore', [SubCategoryController::class, 'restore']);
-Route::get('/subproducts', [SubProductController::class, 'index']);
-Route::post('/subproducts', [SubProductController::class, 'store']);
-Route::put('/subproducts/{id}', [SubProductController::class, 'update']);
-Route::delete('/subproducts/{id}', [SubProductController::class, 'destroy']);
-
-
-Route::get('/sales', [SaleController::class, 'index']);
-Route::post('/sales', [SaleController::class, 'store']);
-Route::put('/sales/{id}', [SaleController::class, 'update']);
-Route::delete('/sales/{id}', [SaleController::class, 'destroy']);
-
-
-Route::get('/sale_details', [SaleDetailController::class, 'index']);
-Route::post('/sale_details', [SaleDetailController::class, 'store']);
-Route::put('/sale_details/{id}', [SaleDetailController::class, 'update']);
-Route::delete('/sale_details/{id}', [SaleDetailController::class, 'destroy']);
-Route::post('/transaction', [SaleController::class, 'saleTransaction']); // Sale transaction
-Route::post('/add-items', [SaleController::class, 'storeItems']); // Store sale items
-
-Route::post('/process-payment', [SaleController::class, 'processPayment']); // Process payment
-
-Route::get('/stocks', [StockController::class, 'index']);
-Route::put('/stocks/{id}', [StockController::class, 'update']);
-Route::delete('/stocks/{id}', [StockController::class, 'destroy']);
-
-Route::post('/add_stocks', [StockController::class, 'addStock']);
-Route::post('/subtract_stocks', [StockController::class, 'subtractStock']);
-
-
-Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
-Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
-
-Route::post('/telegram_bot', [TelegramController::class, 'index']);
