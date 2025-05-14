@@ -8,38 +8,42 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #f9f9f9;
         }
         .header {
             margin-bottom: 20px;
+            text-align: center;
         }
         .header h1 {
             margin: 0;
             color: #333;
-            font-size: 24px;
+            font-size: 28px;
         }
         .header p {
             margin: 5px 0;
             color: #666;
-            font-size: 14px;
+            font-size: 16px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            font-size: 12px;
+            font-size: 14px;
+            background-color: #fff;
         }
         th {
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: #007bff;
+            color: #fff;
             font-weight: bold;
-            text-align: left;
-            padding: 8px;
+            text-align: center;
+            padding: 10px;
             border: 1px solid #ddd;
         }
         td {
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ddd;
             vertical-align: top;
+            text-align: center;
         }
         .text-right {
             text-align: right;
@@ -56,63 +60,127 @@
         .stock-zero {
             color: #ffc107;
         }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .no-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tbody tr:hover {
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>{{ $title }}</h1>
         <p>Generated on: {{ $date }}</p>
+
+        {{-- <div> {{ $data }} </div> --}}
+
     </div>
 
     <table>
         <thead>
             <tr>
-                <th>Nº</th>
-                <th>SN</th>
-                <th>Image</th>
-                <th>Product Name</th>
-                <th>Code</th>
-                <th>Color</th>
-                <th>Package</th>
-                <th>Length (mm)</th>
-                <th>Thickness (mm)</th>
-                <th>Weight per Unit (kg)</th>
-                <th>Total Weight (kg)</th>
+                <th rowspan="2">#</th>
+                <th rowspan="2">SN</th>
+                <th rowspan="2">Image</th>
+                <th rowspan="2">Product Name</th>
+                <th rowspan="2">Code</th>
+                <th rowspan="2">Color</th>
+                <th rowspan="2">Package</th>
+                <th rowspan="2">Length (mm)</th>
+                <th colspan="2">Price</th>
+                <th colspan="4">Stock</th>
+                <th rowspan="2">Remarks</th>
+            </tr>
+            <tr>
                 <th>Buy Price</th>
                 <th>Sell Price</th>
-                <th>In</th>
-                <th>Out</th>
-                <th>Stock</th>
-                <th>Type</th>
-                <th>Remarks</th>
+                <th>Stock In</th>
+                <th>Stock Out</th>
+                <th>Current Stock</th>
+                <th>Stock Type</th>
             </tr>
         </thead>
         <tbody>
             @foreach($data as $index => $row)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $row['SN'] }}</td>
-                    <td>{{ $row['Image'] }}</td>
-                    <td>{{ $row['Product Name'] }}</td>
-                    <td>{{ $row['Code'] }}</td>
-                    <td>{{ $row['Color'] }}</td>
-                    <td class="text-right">{{ $row['Package'] }}</td>
-                    <td class="text-right">{{ $row['Length (mm)'] }}</td>
-                    <td class="text-right">{{ $row['Thickness (mm)'] }}</td>
-                    <td class="text-right">{{ $row['Weight per Unit (kg)'] }}</td>
-                    <td class="text-right">{{ $row['Total Weight (kg)'] }}</td>
-                    <td class="text-right">{{ $row['Buy Price'] }}</td>
-                    <td class="text-right">{{ $row['Sell Price'] }}</td>
-                    <td class="text-right">{{ $row['Stock In'] }}</td>
-                    <td class="text-right">{{ $row['Stock Out'] }}</td>
-                    <td class="text-right @if($row['Stock'] > 0) stock-positive @elseif($row['Stock'] == 0) stock-zero @else stock-negative @endif">
-                        {{ $row['Stock'] }}
-                    </td>
-                    <td>{{ $row['Type'] }}</td>
-                    <td>{{ $row['Remarks'] }}</td>
-                </tr>
+                @foreach($row['products'] as $subIndex => $product)
+                    <tr>
+                        @if($subIndex === 0)
+                            <td rowspan="{{ count($row['products']) }}">{{ $index + 1 }}</td>
+                            <td rowspan="{{ count($row['products']) }}">{{ $row['productCode'] }}</td>
+                            <td rowspan="{{ count($row['products']) }}">
+                                @if(isset($row['productImage']) && $row['productImage'])
+                                    <img src="{{ $row['productImage'] }}" alt="Product Image" width="50">
+                                @else
+                                    <div class="no-image">No Image</div>
+                                @endif
+                            </td>
+                            <td rowspan="{{ count($row['products']) }}">{{ $row['productName'] }}</td>
+                        @endif
+                        <td>{{ $product['code'] }}</td>
+                        <td>{{ $product['color'] }}</td>
+                        <td class="text-right">{{ $product['pieces'] }}</td>
+                        <td class="text-right">{{ $product['length'] }}</td>
+                        <td class="text-right">{{ $product['buyPrice'] }}</td>
+                        <td class="text-right">{{ $product['sellPrice'] }}</td>
+                        <td class="text-right">{{ $product['stockIn'] }}</td>
+                        <td class="text-right">{{ $product['stockOut'] }}</td>
+                        <td class="text-right @if($product['currentStock'] > 0) stock-positive @elseif($product['currentStock'] == 0) stock-zero @else stock-negative @endif">
+                            {{ $product['currentStock'] }}
+                        </td>
+                        <td>{{ $product['stockType'] }}</td>
+                        <td>{{ $product['remarks'] }}</td>
+                    </tr>
+                @endforeach
             @endforeach
         </tbody>
     </table>
+
+    <div class="footer">
+        <p>End of Report</p>
+    </div>
 </body>
 </html>
+@foreach($data as $index => $product)
+    <tr>
+        <td>{{ $index + 1 }}</td>
+        <td>{{ $product['Product Code'] }}</td>
+        <td>
+            @if($product['Image'] !== 'No Image')
+                <img src="{{ $product['Image'] }}" alt="Product Image" width="50">
+            @else
+                <div class="no-image">No Image</div>
+            @endif
+        </td>
+        <td>{{ $product['Product Name'] }}</td>
+        <td>{{ $product['Code'] }}</td>
+        <td>{{ $product['Color'] }}</td>
+        <td class="text-right">{{ $product['Package'] }}</td>
+        <td class="text-right">{{ $product['Length (mm)'] }}</td>
+        <td class="text-right">{{ $product['Buy Price'] }}</td>
+        <td class="text-right">{{ $product['Sell Price'] }}</td>
+        <td class="text-right">{{ $product['Stock In'] }}</td>
+        <td class="text-right">{{ $product['Stock Out'] }}</td>
+        <td class="text-right @if($product['Stock'] > 0) stock-positive @elseif($product['Stock'] == 0) stock-zero @else stock-negative @endif">
+            {{ $product['Stock'] }}
+        </td>
+        <td>{{ $product['Type'] }}</td>
+        <td>{{ $product['Remarks'] }}</td>
+    </tr>
+@endforeach

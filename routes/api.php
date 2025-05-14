@@ -17,16 +17,14 @@ use App\Http\Controllers\Api\v1\RoleController;
 use App\Http\Controllers\Api\v1\CloudinaryController;
 use App\Http\Controllers\Api\v1\ProductExportController;
 use App\Http\Controllers\Api\v1\CustomerController;
+use App\Http\Controllers\Api\ExportController;
 
 
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
 
 
-    //test route
-    Route::get('/test', function () {
-        return response()->json(['message' => 'Hello, this is a test route!']);
-    });
+
 
     ################# user management ######################
 
@@ -150,16 +148,13 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
     Route::post('/customers/{id}/restore', [CustomerController::class, 'restore']);
 
-
     ############# dashboard management ######################
     //dashboard for sale management
-
-
-
 
     //report management
     Route::post('/telegram_bot', [TelegramController::class, 'index']);
     //upload Image to cloudinary
+
     Route::post('/upload', [CloudinaryController::class, 'uploadImage']);
     Route::delete('/delete', [CloudinaryController::class, 'deleteImage']);
     Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
@@ -170,8 +165,28 @@ Route::post('/customers', [CustomerController::class, 'store']);
 Route::get('/customers/{id}', [CustomerController::class, 'show']);
 Route::put('/customers/{id}', [CustomerController::class, 'update']);
 Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
-
+Route::post('/export/pdf', [ExportController::class, 'exportPDF']);
+Route::post('/export/excel', [ExportController::class, 'exportExcel']);
 
 //Login and Register
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
+Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
+    //products for inventory
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::get('/products/{id}', [ProductController::class, 'show']);
+    Route::post('/products/{id}', [ProductController::class, 'update']);
+    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+    //subproducts for inventory
+    Route::get('/subproducts', [SubProductController::class, 'index']);
+    Route::post('/subproducts', [SubProductController::class, 'store']);
+    Route::get('/subproducts/{id}', [SubProductController::class, 'show']);
+    Route::put('/subproducts/{id}', [SubProductController::class, 'update']);
+    Route::delete('/subproducts/{id}', [SubProductController::class, 'destroy']);
+
+    //product details for inventory
+    Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
+    Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);

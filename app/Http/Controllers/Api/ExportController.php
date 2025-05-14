@@ -23,6 +23,7 @@ class ExportController extends Controller
                 'search' => 'nullable|string',
                 'sortBy' => 'nullable|string',
                 'sortOrder' => 'nullable|in:asc,desc',
+                'additionalParam' => 'nullable|string' // Example of adding a new parameter
             ]);
 
             return $this->exportService->exportToPDF($params);

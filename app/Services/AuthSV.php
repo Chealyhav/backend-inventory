@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\JWTAuth as JWTAuthFactory;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -77,19 +78,44 @@ class AuthSV extends BaseService
         }
 
         //get role name by role id
-        $role = DB::table('roles')->where('id', $user->role_id)
-            ->select('name')
-            ->first();
+        $roleName = DB::table('roles')->where('id', $user->role_id)->value('name');
+
 
         $token = JWTAuth::fromUser($user);
 
+        if (!$token) {
+            throw new Exception('Token not found');
+        }
+        $data = [
+            'id' => $user->id,
+            'username' => $user->username,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'dob' => $user->dob,
+            'bio' => $user->bio,
+            'gender' => $user->gender,
+            'profile_picture' => $user->profile_picture,
+            'email_verified_at' => $user->email_verified_at,
+            'status' => $user->status,
+            'role_id' => $user->role_id,
+            'role_name' => $roleName,
+            'deleted_at' => $user->deleted_at,
+            'created_at' => $user->created_at,
+            'updated_at' => $user->updated_at,
+        ];
+
         return [
-            'user' => $user,
+            'user' => $data,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in_second' => JWTAuth::factory()->getTTL() * 60,
-            'role' => $role,
-
+            //format expires_in to human readable date  to local timezone and  format to Y-m-d H:i:s pm or am  full date time
+            'expires_in' => (new \DateTime('+1 hour', new \DateTimeZone('UTC')))
+                ->setTimezone(new \DateTimeZone('Asia/Phnom_Penh'))
+                ->format('Y-m-d h:i:s A'),
+            'expires' => JWTAuth::factory()->getTTL() * 60, // 1 hour
+            'number_expires' => '1 hour',
         ];
     }
 
@@ -99,41 +125,59 @@ class AuthSV extends BaseService
         try {
             $token = JWTAuth::refresh(JWTAuth::getToken());
             return [
-
-                'token' => $token,
+                'refresh_token' => $token,
                 'token_type' => 'bearer',
-
                 //expire  7 days from now
-                'expires_date' => JWTAuth::factory()->getTTL() * 60 * 24 * 7,
+                'expires_date' => JWTAuth::factory()->getTTL() * 60 * 24 * 7, // 7 days
+                'expires_in' => (new \DateTime('+7 days', new \DateTimeZone('UTC')))
+                    ->setTimezone(new \DateTimeZone('Asia/Phnom_Penh'))
+                    ->format('Y-m-d h:i:s a'),
+                'number_expires' => '7 days',
             ];
         } catch (TokenExpiredException $e) {
             throw new Exception('Token expired');
         }
     }
     // Logout user
-    public function logout( $token )
+    public function logout($token)
     {
-        // Logout user
+        try {
+            if (!$token) {
+                return ['message' => 'Token is required for logout'];
+            }
+           return JWTAuth::setToken($token)->invalidate(true);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return ['message' => 'Token expired'];
+        } catch (JWTException $e) {
+            return ['message' => 'Failed to logout, please try again'];
+        }
 
-        $token = JWTAuth::invalidate(JWTAuth::getToken());
-        if (!$token) {
-            throw new Exception('Token not found');
-        }
-        Auth::guard('api')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
     }
-    //resetPassword
-    public function resetPassword($token, $password)
+
+
+    // Reset password using refresh_token
+    public function resetPassword($refresh_token, $new_password)
     {
-        $user = JWTAuth::toUser($token);
-        $user->password = bcrypt($password);
-        $user->save();
-        if (!$user) {
-            throw new Exception('User not found');
+        try {
+            // Get the user from the refresh token
+            $user = JWTAuth::setToken($refresh_token)->toUser();
+
+            if (!$user) {
+                throw new Exception('User not found');
+            }
+
+            // Ensure the new password is different from the old password
+            if (Hash::check($new_password, $user->password)) {
+                throw new Exception('New password cannot be the same as the old password');
+            }
+
+            // Update the user's password
+            $user->password = bcrypt($new_password);
+            $user->save();
+
+            return response()->json(['message' => 'Password reset successfully']);
+        } catch (Exception $e) {
+            throw new Exception('Failed to reset password: ' . $e->getMessage());
         }
-        if ($user->password === $password) {
-            throw new Exception('New password cannot be the same as the old password');
-        }
-        return $user;
     }
 }

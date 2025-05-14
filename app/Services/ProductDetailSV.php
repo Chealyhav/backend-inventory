@@ -67,7 +67,7 @@ class ProductDetailSV  extends  BaseService
             's.length',
             's.pieces',
             's.thickness',
-            's.unit_weight',
+            's.unit_weight', // Ensure this field is selected
             's.total_weight',
             's.buy_price',
             's.sale_price',
