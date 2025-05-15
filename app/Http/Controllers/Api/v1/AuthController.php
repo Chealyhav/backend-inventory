@@ -67,4 +67,18 @@ class AuthController extends BaseAPI
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
+
+
+    // Get user profile
+    public function getProfile(Request $request)
+    {
+        try {
+            // Ensure the token is set in the Authorization header
+            $data = $this->authService->getProfile();
+
+            return $this->successResponse($data, 'Profile retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
 }

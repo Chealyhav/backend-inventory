@@ -180,4 +180,48 @@ class AuthSV extends BaseService
             throw new Exception('Failed to reset password: ' . $e->getMessage());
         }
     }
+
+
+
+    //get profile user by token
+    public function getProfile($token = null)
+    {
+        try {
+            if ($token) {
+                JWTAuth::setToken($token);
+            }
+
+            $user = JWTAuth::parseToken()->authenticate();
+
+
+            if (!$user) {
+                throw new Exception('User not found');
+            }
+
+            //make change role_id  to role_name
+            $roleName = DB::table('roles')->where('id', $user->role_id)->value('name');
+            $user->role_name = $roleName;
+
+            return [
+                'id' => $user->id,
+                'username' => $user->username,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'dob' => $user->dob,
+                'bio' => $user->bio,
+                'role_name' => $user->role_name,
+                'profile_picture' => $user->profile_picture,
+                'email_verified_at' => $user->email_verified_at,
+                'status' => $user->status,
+                'role_id' => $user->role_id,
+                'deleted_at' => $user->deleted_at,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ];
+        } catch (Exception $e) {
+            throw new Exception('Failed to get profile: ' . $e->getMessage());
+        }
+    }
 }

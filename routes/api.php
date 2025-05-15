@@ -29,6 +29,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     ################# user management ######################
 
     //authentication
+    //get user profile
+    Route::get('/profile', [AuthController::class, 'getProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refreshToken']);
     Route::post('/register', [AuthController::class, 'register']);
