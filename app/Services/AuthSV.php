@@ -131,7 +131,7 @@ class AuthSV extends BaseService
                 'expires_date' => JWTAuth::factory()->getTTL() * 60 * 24 * 7, // 7 days
                 'expires_in' => (new \DateTime('+7 days', new \DateTimeZone('UTC')))
                     ->setTimezone(new \DateTimeZone('Asia/Phnom_Penh'))
-                    ->format('Y-m-d h:i:s a'),
+                    ->format('Y-m-d h:i:s A'),
                 'number_expires' => '7 days',
             ];
         } catch (TokenExpiredException $e) {
@@ -219,6 +219,15 @@ class AuthSV extends BaseService
                 'deleted_at' => $user->deleted_at,
                 'created_at' => $user->created_at,
                 'updated_at' => $user->updated_at,
+                'created_by' => $user->created_by,
+                'updated_by' => $user->updated_by,
+                'deleted_by' => $user->deleted_by,
+                 //expire  7 days from now
+                 'expires_date' => JWTAuth::factory()->getTTL() * 60 * 24 * 7, // 7 days
+                 'expires_in' => (new \DateTime('+7 days', new \DateTimeZone('UTC')))
+                     ->setTimezone(new \DateTimeZone('Asia/Phnom_Penh'))
+                     ->format('Y-m-d h:i:s A'),
+                 'number_expires' => '7 days',
             ];
         } catch (Exception $e) {
             throw new Exception('Failed to get profile: ' . $e->getMessage());
