@@ -42,10 +42,20 @@ class CustomerSV extends BaseService
             $query->where('c.status', $params['status']);
         }
 
-        // // Sorting
-        $query->orderBy('created_at', 'asc')
-                ->orderBy('id', 'asc');
-        //$customers = $query->get();
+
+        // Get sorting direction from request, default to 'asc'
+        $sortDirection = request('sort_direction', 'asc');
+
+        // Validate direction (just in case)
+        $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc']) ? $sortDirection : 'asc';
+
+        // Apply sorting
+        $query->orderBy('created_at', $sortDirection)
+            ->orderBy('id', $sortDirection);
+
+        $customers = $query->get();
+
+
 
         // Pagination count
         $total = $query->count();
