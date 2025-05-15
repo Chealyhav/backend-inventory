@@ -192,3 +192,4 @@ Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories'
     //product details for inventory
     Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
     Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
+    Route::get('/colors', [ColorController::class, 'index']);

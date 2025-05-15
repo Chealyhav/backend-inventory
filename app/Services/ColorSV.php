@@ -36,8 +36,11 @@ class ColorSV extends BaseService
             $query->where('status', $params['status']);
         }
 
-        // Apply ordering by created_at descending
-        $query->orderBy('created_at', 'asc');
+        if (isset($params['order_by'])) {
+            // Apply ordering by created_at descending
+            $query->orderBy('created_at', $params['order_by']);
+        }
+
 
         // Pagination setup
         $limit = $params['limit'] ?? 10;  // Default to 10 items per page
@@ -73,7 +76,7 @@ class ColorSV extends BaseService
     public function ColorCreate(array $params = array())
     {
         $query = $this->getQuery();
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->create(
                 [
                     'name' => $params['name'] ?? null,
@@ -91,18 +94,18 @@ class ColorSV extends BaseService
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 $data->update(
                     [
-                        'name' => $params['name']?? null,
+                        'name' => $params['name'] ?? null,
                         'updated_by' => Auth::user()->id ?? null,
                     ]
                 );
                 return $data;
             } else {
-                throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
+                throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
             throw new Exception('Query not found');
@@ -112,13 +115,13 @@ class ColorSV extends BaseService
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 $data->delete();
                 return $data;
             } else {
-                throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
+                throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
             throw new Exception('Query not found');
@@ -129,12 +132,12 @@ class ColorSV extends BaseService
     {
         $query = $this->getQuery();
 
-        if(isset($query)){
+        if (isset($query)) {
             $data = $query->where('id', $id)->first();
-            if(isset($data)){
+            if (isset($data)) {
                 return $data;
             } else {
-                throw new Exception("Record ".$id." not found in model ".$query->getModel()::class."");
+                throw new Exception("Record " . $id . " not found in model " . $query->getModel()::class . "");
             }
         } else {
             throw new Exception('Query not found');
