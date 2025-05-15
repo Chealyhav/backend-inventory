@@ -31,13 +31,10 @@ class CustomerSV extends BaseService
                 'c.deleted_at',
                 'c.status'
             );
-        // Search functionality
+
         if (!empty($params['search'])) {
             $searchTerm = '%' . $params['search'] . '%';
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('c.name', 'LIKE', $searchTerm)
-                    ->orWhere('c.company_name', 'LIKE', $searchTerm);
-            });
+            $query->where('c.name', 'LIKE', $searchTerm);
         }
 
         //Status filter
@@ -45,10 +42,10 @@ class CustomerSV extends BaseService
             $query->where('c.status', $params['status']);
         }
 
-        // Sorting
-        if (!empty($params['order_by'])) {
-            $query->orderBy($params['order_by'], $params['c.created_at'] ?? 'asc');
-        }
+        // // Sorting
+        $query->orderBy('created_at', 'asc')
+                ->orderBy('id', 'asc');
+        //$customers = $query->get();
 
         // Pagination count
         $total = $query->count();
@@ -64,6 +61,13 @@ class CustomerSV extends BaseService
         $data = $query->offset($offset)->limit($limit)->get();
 
         $customers = $query->get();
+        if ($data->isEmpty()) {
+            return [
+                'status' => 'info',
+                'message' => 'don\'t have any data on table',
+                'data' => 0,
+            ];
+        }
 
         return [
             'total' => $total,
@@ -76,8 +80,10 @@ class CustomerSV extends BaseService
         ];
     }
 
+
     public function customerCreate(array $params = [])
     {
+
         $query = $this->getQuery();
 
         if (!isset($params['name'], $params['company_name'], $params['phone_number'])) {
@@ -99,6 +105,8 @@ class CustomerSV extends BaseService
 
     public function customerUpdate($id, array $params = [])
     {
+
+
         $query = $this->getQuery();
         $data = $query->find($id);
 
@@ -106,6 +114,7 @@ class CustomerSV extends BaseService
             throw new ModelNotFoundException("Customer with ID {$id} not found.");
         }
 
+        // Only update fields that were passed
         $data->update([
             'name' => $params['name'] ?? $data->name,
             'gender' => $params['gender'] ?? $data->gender,
