@@ -71,13 +71,7 @@ class CustomerSV extends BaseService
         $data = $query->offset($offset)->limit($limit)->get();
 
         $customers = $query->get();
-        if ($data->isEmpty()) {
-            return [
-                'status' => 'info',
-                'message' => 'don\'t have any data on table',
-                'data' => 0,
-            ];
-        }
+        
 
         return [
             'total' => $total,
