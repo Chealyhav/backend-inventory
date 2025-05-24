@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ $title }}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Products Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -157,7 +156,7 @@
     </div>
 </body>
 </html>
-@foreach($data as $index => $product)
+{{-- @foreach($data as $index => $product)
     <tr>
         <td>{{ $index + 1 }}</td>
         <td>{{ $product['Product Code'] }}</td>
@@ -183,4 +182,4 @@
         <td>{{ $product['Type'] }}</td>
         <td>{{ $product['Remarks'] }}</td>
     </tr>
-@endforeach
+@endforeach --}}

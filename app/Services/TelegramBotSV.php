@@ -84,8 +84,7 @@ class TelegramBotSV extends BaseService
     protected function formatMessage($action, $productName, $quantity, $description = null)
     {
         // Common message structure
-        $message = "<b>📦  Product Action Notification</b> \n"	;
-        $message .= "<b>Product Action Notification</b>\n";
+        $message = "<b>Product Action Notification</b>\n";
         $message.= "  \n";
         $message = "<b>{$this->getActionEmoji($action)}  {$this->getActionLabel($action)}</b>\n";
         $message.= "  \n";

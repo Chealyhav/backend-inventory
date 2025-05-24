@@ -41,26 +41,20 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     Route::put('/users/{id}', [UserController::class, 'update']);
-
-    //   // Create a new sale
-    //   Route::post('/sales', [SaleController::class, 'store']);
-    //   // Add items to an existing sale
-    //   Route::post('/sales/{sale_id}/items', [SaleController::class, 'storeItems']);
-    //   // Process payment for a sale
-    //   Route::post('/sales/{sale_id}/payment', [SaleController::class, 'processPayment']);
-
-    Route::post('/transaction', [SaleController::class, 'saleTransaction']); // Sale transaction
-    Route::post('/sales', [SaleController::class, 'store']); // Create a sale
-    Route::post('/add-items', [SaleController::class, 'storeItems']); // Store sale items
-
-    Route::post('/process-payment', [SaleController::class, 'processPayment']); // Process payment
-
-
-    Route::post('/upload', [CloudinaryController::class, 'uploadImage']);
-    Route::delete('/delete', [CloudinaryController::class, 'deleteImage']);
-    Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
-
-
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    Route::post('/users/{id}/restore', [UserController::class, 'restore']);
+    //roles management
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::get('/roles/{id}', [RoleController::class, 'show']);
+    Route::put('/roles/{id}', [RoleController::class, 'update']);
+    Route::delete('/roles/{id}', [RoleController::class, 'destroy']);
+    //permissions management
+    Route::get('/permissions', [RoleController::class, 'index']);
+    Route::post('/permissions', [RoleController::class, 'store']);
+    Route::get('/permissions/{id}', [RoleController::class, 'show']);
+    Route::put('/permissions/{id}', [RoleController::class, 'update']);
+    Route::delete('/permissions/{id}', [RoleController::class, 'destroy']);
 
 
     ######### inventory management #########################
@@ -162,34 +156,12 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
 });
 
-Route::get('/customers', [CustomerController::class, 'index']);
-Route::post('/customers', [CustomerController::class, 'store']);
-Route::get('/customers/{id}', [CustomerController::class, 'show']);
-Route::put('/customers/{id}', [CustomerController::class, 'update']);
-Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
 Route::post('/export/pdf', [ExportController::class, 'exportPDF']);
 Route::post('/export/excel', [ExportController::class, 'exportExcel']);
 
 //Login and Register
+Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
-Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
-    //products for inventory
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::get('/products/{id}', [ProductController::class, 'show']);
-    Route::post('/products/{id}', [ProductController::class, 'update']);
-    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
-    //subproducts for inventory
-    Route::get('/subproducts', [SubProductController::class, 'index']);
-    Route::post('/subproducts', [SubProductController::class, 'store']);
-    Route::get('/subproducts/{id}', [SubProductController::class, 'show']);
-    Route::put('/subproducts/{id}', [SubProductController::class, 'update']);
-    Route::delete('/subproducts/{id}', [SubProductController::class, 'destroy']);
-
-    //product details for inventory
-    Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
-    Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
-    Route::get('/colors', [ColorController::class, 'index']);

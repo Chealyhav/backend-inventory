@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('subproducts', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->float('pieces')->nullable();
+            $table->integer('pieces')->nullable();
             $table->float('thickness')->nullable();
             $table->float('length')->nullable();
             $table->float('unit_weight')->nullable();
             $table->float('total_weight')->nullable();
-            $table->float('sale_price')->nullable();
-            $table->float('buy_price')->nullable();
+            $table->decimal('sale_price', 10, 2)->nullable();
+            $table->decimal('buy_price', 10, 2)->nullable();
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('color_id')->nullable();
             $table->decimal('discount', 10, 2)->default(0);
