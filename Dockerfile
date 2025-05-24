@@ -21,14 +21,6 @@ RUN apk add --no-cache \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable gd
 
-# Timezone
-ENV TZ=Asia/Phnom_Penh
-RUN apk add --no-cache tzdata && \
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone && \
-    apk del tzdata
-
-
 # Install composer
 COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
 
@@ -100,4 +92,5 @@ VOLUME ["/var/www/html/storage/app"]
 # Auto-migrate and run services (nginx and php-fpm)
 CMD ["sh", "-c", "nginx && php-fpm"]
 
-
+# Expose port 8080 for the application
+EXPOSE 8080
