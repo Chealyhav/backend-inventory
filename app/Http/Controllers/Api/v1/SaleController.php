@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Services\SaleSV;
 use App\Services\TelegramBotSV;  // Import the TelegramBotSV service
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\v1\BaseAPI;
@@ -14,12 +15,15 @@ class SaleController extends BaseAPI
 {
     protected $telegramBot;
     protected $posService;
+    protected $saleService;
 
     // Inject the TelegramBotSV and PosSV services
-    public function __construct(TelegramBotSV $telegramBot, PosSV $posService)
+    public function __construct(TelegramBotSV $telegramBot, PosSV $posService , SaleSV $saleService)
     {
         $this->telegramBot = $telegramBot;
         $this->posService = $posService;
+        $this->saleService = $saleService;
+
     }
 
        /**
@@ -195,4 +199,100 @@ class SaleController extends BaseAPI
     //         return response()->json(['error' => 'Transaction failed', 'message' => $e->getMessage()], 500);
     //     }
     // }
+
+
+
+
+
+    public function createOrder(Request $request)
+    {
+        try {
+            $params = $request->all();
+            $orderId = $this->saleService->createOrder($params);
+            return $this->successResponse($orderId, 'Order created successfully.');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+    //payment
+    public function createPayment(Request $request)
+    {
+        try {
+            $params = $request->all();
+            $paymentId = $this->saleService->createPayment($params);
+            return $this->successResponse($paymentId, 'Payment created successfully.');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+    // public function createInvoice(Request $request)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         $invoiceId = $this->saleService->createInvoice($params);
+    //         return $this->sendResponse($invoiceId, 'Invoice created successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // public function createPayment(Request $request)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         $paymentId = $this->saleService->createPayment($params);
+    //         return $this->sendResponse($paymentId, 'Payment created successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // public function createSale(Request $request)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         $saleId = $this->saleService->createSale($params);
+    //         return $this->sendResponse($saleId, 'Sale created successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // public function getOrderDetails($orderId)
+    // {
+    //     try {
+    //         $orderDetails = $this->saleService->getOrderDetails($orderId);
+    //         return $this->sendResponse($orderDetails, 'Order details retrieved successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // public function indexPayment(Request $request)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         $payments = $this->posService->getPayments($params);
+    //         return $this->sendResponse($payments, 'Payments retrieved successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // public function showPayment($id)
+    // {
+    //     try {
+    //         $payment = $this->posService->getPaymentById($id);
+    //         return $this->sendResponse($payment, 'Payment retrieved successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+    // public function updatePayment(Request $request, $id)
+    // {
+    //     try {
+    //         $params = $request->all();
+    //         $updatedPayment = $this->posService->updatePayment($id, $params);
+    //         return $this->sendResponse($updatedPayment, 'Payment updated successfully.');
+    //     } catch (\Exception $e) {
+    //         return $this->errorResponse($e->getMessage(), $e->getCode());
+    //     }
+    // }
+
 }

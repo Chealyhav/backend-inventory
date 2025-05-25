@@ -11,26 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('price_qty_adjusts', function (Blueprint $table) {
             $table->id();
-            $table->integer('invoice_id');
-            $table->integer('customer_id');
-            $table->decimal('amount_paid', 10, 2);
-            $table->string('payment_reference')->nullable();
-            $table->string('payment_method')->default('cash');
-            $table->enum('payment_status', ['pending', 'paid', 'partially_paid', 'cancelled'])->default('pending');
-            $table->string('notes')->nullable();
-            $table->date('payment_date')->useCurrent();
-
+            $table->integer('subproduct_id');
+            $table->integer('sale_type_id');
+            $table->decimal('price_adjustment', 10, 2)->default(0);
+            $table->decimal('quantity_adjustment', 10, 2)->default(0);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->boolean('status')->default(1);
-
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -40,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('price_qty_adjuest');
     }
 };

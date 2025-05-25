@@ -11,23 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->integer('customer_id')->nullable();
-            $table->enum('sale_type', ['Finished Good', 'Material']);
+            $table->integer('order_id');
+            $table->integer('subproduct_id');
+            $table->integer('sale_type_id')->nullable(); // 1: Finished Good, 2: Material
+            $table->integer('quantity')->default(1);
+            $table->decimal('unit_price', 10, 2);  // base_price + adjustment
             $table->decimal('total_price', 10, 2);
+            $table->string('notes')->nullable();
+            $table->string('title')->nullable();
             $table->date('order_date')->useCurrent();
+            $table->date('delivery_date')->nullable();
+            $table->integer('status')->default(1); // 1: Pending, 2: Completed, 3: Cancelled
+            $table->integer('invoice_id')->nullable();
+
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
-            $table->boolean('status')->default(1);
-
-
-
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('deleted_by')->references('id')->on('users')->onDelete('set null');
-            $table->softDeletes();
+
             $table->timestamps();
         });
     }
@@ -37,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('order_items');
     }
 };

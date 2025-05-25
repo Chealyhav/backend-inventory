@@ -150,7 +150,8 @@ class StockSv extends BaseService
      *
      * @param array $params
      * @return \Illuminate\Database\Eloquent\Collection
-     */ public function getAllStocks($params = [])
+     */
+    public function getAllStocks($params = [])
     {
         $query = $this->getQuery()
             ->leftJoin('subproducts', 'stocks.subproduct_id', '=', 'subproducts.id')
@@ -214,8 +215,6 @@ class StockSv extends BaseService
             'data' => $results,
         ];
     }
-
-
 
     /**
      * Get a stock entry by ID

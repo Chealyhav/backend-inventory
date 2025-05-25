@@ -24,8 +24,6 @@ use App\Http\Controllers\Api\ExportController;
 Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
 
 
-
-
     ################# user management ######################
 
     //authentication
@@ -165,3 +163,8 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
+Route::post('order', [SaleController::class, 'createOrder']);
+Route::post('invoice', [SaleController::class, 'createInvoice']);
+Route::post('payment', [SaleController::class, 'createPayment']);
+Route::post('create', [SaleController::class, 'createSale']);
+Route::get('order/{id}', [SaleController::class, 'getOrderDetails']);
