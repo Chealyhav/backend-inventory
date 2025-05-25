@@ -76,6 +76,14 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::delete('/colors/{id}', [ColorController::class, 'destroy']);
     Route::delete('colors/{id}/restore', [ColorController::class, 'restore']);
 
+    //customers for inventory
+    Route::get('/customers', [CustomerController::class, 'index']);
+    Route::get('/customers/{id}', [CustomerController::class, 'show']);
+    Route::post('/customers', [CustomerController::class, 'store']);
+    Route::put('/customers/{id}', [CustomerController::class, 'update']);
+    Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
+
+
     //products for inventory
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/products', [ProductController::class, 'store']);
