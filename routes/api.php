@@ -152,6 +152,10 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/upload', [CloudinaryController::class, 'uploadImage']);
     Route::delete('/delete', [CloudinaryController::class, 'deleteImage']);
     Route::get('/image-url', [CloudinaryController::class, 'getImageUrl']);
+    Route::post('order', [SaleController::class, 'createOrder']);
+    Route::post('invoice', [SaleController::class, 'createInvoice']);
+    Route::post('payment', [SaleController::class, 'createPayment']);
+    Route::post('create', [SaleController::class, 'createSale']);
 });
 
 Route::post('/export/pdf', [ExportController::class, 'exportPDF']);
@@ -163,8 +167,3 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::post('order', [SaleController::class, 'createOrder']);
-Route::post('invoice', [SaleController::class, 'createInvoice']);
-Route::post('payment', [SaleController::class, 'createPayment']);
-Route::post('create', [SaleController::class, 'createSale']);
-Route::get('order/{id}', [SaleController::class, 'getOrderDetails']);

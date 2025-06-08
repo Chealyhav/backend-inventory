@@ -18,8 +18,13 @@ class SaleSV extends BaseService
     {
         return Order::query();
     }
-
-
+    /**
+     * Create a new order with items and update stock accordingly and return the created order and have status paid.
+     *
+     * @param array $params
+     * @return \Illuminate\Database\Eloquent\Collection
+     * @throws \Exception
+     */
     public function createOrder(array $params = [])
     {
         try {
@@ -139,8 +144,13 @@ class SaleSV extends BaseService
             throw new \Exception('Order creation failed: ' . $e->getMessage());
         }
     }
-
-
+    /**
+     * Create a payment for an order and update order status if payment is successful.
+     *
+     * @param array $params
+     * @return \App\Models\Payment
+     * @throws \Exception
+     */
 
     // createPayment
     public function createPayment(array $params = [])
@@ -220,8 +230,70 @@ class SaleSV extends BaseService
         }
     }
 
+    /**
+     * Create an invoice for an order and payment base on sale_type(ex:Material or Finished Good) and payment_status of order .
+     *
+     * @param array $params
+     * @return \App\Models\Invoice
+     * @throws \Exception
+     */
+    public function createInvoice(array $params = [])
+    {
+        try {
+            DB::beginTransaction();
 
+            // Validate required parameters
+            if (empty($params['order_id']) || !is_numeric($params['order_id'])) {
+                throw new \InvalidArgumentException('Order ID is required.');
+            }
 
+            // Find the order
+            $order = Order::find($params['order_id']);
+            if (!$order) {
+                throw new \InvalidArgumentException('Order not found for ID: ' . $params['order_id']);
+            }
 
+            // Check if the order is already paid
+            if ($order->status === true) {
+                throw new \InvalidArgumentException('Order is already paid for ID: ' . $params['order_id']);
+            }
 
+            // Determine invoice details based on sale_type
+            $saleType = $order->sale_type ?? 'POS';
+            $invoiceData = [
+                'order_id'     => $order->id,
+                'customer_id'  => $order->customer_id ?? 1,
+                'invoice_date' => now(),
+                'due_date'     => now()->addDays(30),
+                'status'       => 'pending',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ];
+
+            // Calculate total_amount based on sale_type
+            if ($saleType === 'Finished Good') {
+                // For Finished Good, use total_price from order
+                $invoiceData['total_amount'] = $order->total_price;
+                $invoiceData['title'] = $order->title ?? null;
+            } elseif ($saleType === 'Material') {
+                // For Material, sum order_items total_price
+                $invoiceData['total_amount'] = DB::table('order_items')
+                    ->where('order_id', $order->id)
+                    ->sum('total_price');
+            } else {
+                // Default fallback
+                $invoiceData['total_amount'] = $order->total_price;
+            }
+
+            // Create invoice record
+            $invoice = \App\Models\Invoice::create($invoiceData);
+
+            DB::commit();
+            return $invoice;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Invoice creation error: ' . $e->getMessage());
+            throw new \Exception('Invoice creation failed: ' . $e->getMessage());
+        }
+    }
 }

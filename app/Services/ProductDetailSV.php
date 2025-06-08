@@ -53,8 +53,8 @@ class ProductDetailSV  extends  BaseService
         $orderBy = $params['order_by'] ?? 'p.created_at';
         $order = $params['order'] ?? 'asc';
         $query->orderBy($orderBy, $order);
-
         $total = $query->count();
+        $query->limit($limit)->offset($offset);
         $productsData = $query->select(
             'p.id',
             'p.product_code',
@@ -159,6 +159,10 @@ class ProductDetailSV  extends  BaseService
                 $query->where($column, $value);
             }
         }
+        //limit
+        if (!isset($params['limit'])) {
+            $params['limit'] = 10; // Default limit
+        }
 
         // Pagination setup
         $limit = $params['limit'] ?? 10;
@@ -172,6 +176,9 @@ class ProductDetailSV  extends  BaseService
 
         // Count total records for pagination
         $total = $query->count();
+
+        // Apply pagination
+        $query->limit($limit)->offset($offset);
 
         // Execute the query and fetch the product data
         $productsData = $query->select(
