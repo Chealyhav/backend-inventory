@@ -54,7 +54,7 @@ class ProductDetailSV  extends  BaseService
         $order = $params['order'] ?? 'asc';
         $query->orderBy($orderBy, $order);
         $total = $query->count();
-        $query->limit($limit)->offset($offset);
+       // $query->limit($limit)->offset($offset);
         $productsData = $query->select(
             'p.id',
             'p.product_code',
@@ -178,7 +178,7 @@ class ProductDetailSV  extends  BaseService
         $total = $query->count();
 
         // Apply pagination
-        $query->limit($limit)->offset($offset);
+        //$query->limit($limit)->offset($offset);
 
         // Execute the query and fetch the product data
         $productsData = $query->select(
