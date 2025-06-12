@@ -10,7 +10,13 @@ class ProductDetailSV  extends  BaseService
     //get all products by category
     public function getAllAluminumProductsByCategory(array $params)
     {
+
         $categoryId = $params['category'] ?? 2;
+        // Get the category name from the database
+        $category = DB::table('categories')->where('id', $categoryId)->first();
+        if (!$category || $category->name !== 'Aluminum') {
+            throw new \Exception('Category name must be Aluminum');
+        }
         $subcategoryId = $params['subcategory'] ?? null;
 
         // Start the query to get products based on category
@@ -40,9 +46,9 @@ class ProductDetailSV  extends  BaseService
                 $query->where($column, $value);
             }
         }
-        if(isset($params['sub_category_id'])) {
+        if (isset($params['sub_category_id'])) {
             $query->where('p.sub_category_id', $params['sub_category_id']);
-         }
+        }
 
         // Pagination setup
         $limit = $params['limit'] ?? 10;
@@ -54,7 +60,7 @@ class ProductDetailSV  extends  BaseService
         $order = $params['order'] ?? 'asc';
         $query->orderBy($orderBy, $order);
         $total = $query->count();
-       // $query->limit($limit)->offset($offset);
+        $query->limit($limit)->offset($offset);
         $productsData = $query->select(
             'p.id',
             'p.product_code',
@@ -114,18 +120,33 @@ class ProductDetailSV  extends  BaseService
             ];
         }
 
-        // if not have  subproduct not show  all  have subproduct  can  show
         if (empty($products)) {
-            return [];
+            throw new \Exception('product not found!');
         }
-
-        // Return the paginated data and the total count
-        return array_values($products);
+        return [
+            'total' => (int)$total,
+            'limit' => (int)$limit,
+            'page' => (int)$page,
+            'total_pages' => (int)ceil($total / $limit),
+            'next_page' => $page < ceil($total / $limit) ? (int)($page + 1) : 0,
+            'prev_page' => $page > 1 ? (int)($page - 1) : 0,
+            'current_page' => (int)$page,
+            'last_page' => (int)ceil($total / $limit),
+            'data' => array_values($products)
+        ];
     }
 
     public function getAccessoriesProductsByCategory(array $params)
     {
+
+
         $categoryId = $params['category'] ?? 1;
+        // Get the category name from the database
+        $category = DB::table('categories')->where('id', $categoryId)->first();
+
+        if (!$category || $category->name !== 'Accessories') {
+            throw new \Exception('Category name must be Accessories');
+        }
         $subcategoryId = $params['subcategory'] ?? null;
 
         // Start the query to get products based on category
@@ -135,6 +156,7 @@ class ProductDetailSV  extends  BaseService
             ->leftJoin('categories as c', 'sc.category_id', '=', 'c.id')
             ->leftJoin('colors as col', 's.color_id', '=', 'col.id') // Fixed join condition
             ->where('c.id', '=', $categoryId);
+
 
         // If a subcategory ID is provided, filter by subcategory
         if ($subcategoryId !== null) {
@@ -149,8 +171,8 @@ class ProductDetailSV  extends  BaseService
             });
         }
 
-        if(isset($params['sub_category_id'])) {
-           $query->where('p.sub_category_id', $params['sub_category_id']);
+        if (isset($params['sub_category_id'])) {
+            $query->where('p.sub_category_id', $params['sub_category_id']);
         }
 
         // Apply custom filters if provided
@@ -178,7 +200,7 @@ class ProductDetailSV  extends  BaseService
         $total = $query->count();
 
         // Apply pagination
-        //$query->limit($limit)->offset($offset);
+        $query->limit($limit)->offset($offset);
 
         // Execute the query and fetch the product data
         $productsData = $query->select(
@@ -235,7 +257,19 @@ class ProductDetailSV  extends  BaseService
             ];
         }
 
-        // Return the paginated data and the total count
-        return array_values($products);
+        if (empty($products)) {
+            throw new \Exception('product not found!');
+        }
+        return [
+            'total' => (int)$total,
+            'limit' => (int)$limit,
+            'page' => (int)$page,
+            'total_pages' => (int)ceil($total / $limit),
+            'next_page' => $page < ceil($total / $limit) ? (int)($page + 1) : 0,
+            'prev_page' => $page > 1 ? (int)($page - 1) : 0,
+            'current_page' => (int)$page,
+            'last_page' => (int)ceil($total / $limit),
+            'data' => array_values($products)
+        ];
     }
 }
