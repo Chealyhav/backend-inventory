@@ -26,6 +26,19 @@ class SaleController extends BaseAPI
 
     }
 
+    //product detail
+    public function productDetail(Request $request)
+    {
+        try {
+            $params = $request->all();
+            $productDetail = $this->saleService->getProductsDetail($params);
+            return $this->sendResponse($productDetail, message: 'Product detail retrieved successfully.');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
+        }
+    }
+
+
        /**
      * sale transaction
      *

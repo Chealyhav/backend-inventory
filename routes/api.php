@@ -156,6 +156,13 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('invoice', [SaleController::class, 'createInvoice']);
     Route::post('payment', [SaleController::class, 'createPayment']);
     Route::post('create', [SaleController::class, 'createSale']);
+    Route::get('order/{id}', [SaleController::class, 'getOrderDetails']);
+    //product details
+    Route::get('/product_details', [SaleController::class, 'productDetail']);
+    Route::post('/order', [SaleController::class, 'createOrder']);
+    Route::post('/invoice', [SaleController::class, 'createInvoice']);
+    Route::post('/payment', [SaleController::class, 'createPayment']);
+    Route::post('/create', [SaleController::class, 'createSale']);
 });
 
 Route::post('/export/pdf', [ExportController::class, 'exportPDF']);
@@ -167,3 +174,12 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
+
+Route::post('order', [SaleController::class, 'createOrder']);
+Route::post('invoice', [SaleController::class, 'createInvoice']);
+Route::post('payment', [SaleController::class, 'createPayment']);
+Route::post('create', [SaleController::class, 'createSale']);
+Route::get('order/{id}', [SaleController::class, 'getOrderDetails']);
+Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
+Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
+Route::get('/product_details', [SaleController::class, 'productDetail']);

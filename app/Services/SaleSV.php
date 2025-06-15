@@ -18,6 +18,151 @@ class SaleSV extends BaseService
     {
         return Order::query();
     }
+
+    //product detail
+    public function getProductsDetail(array $params)
+    {
+        $categoryId = $params['category'] ?? null;
+        $subcategoryId = $params['subcategory'] ?? null;
+
+        // Start the query to get products based on category
+        $query = DB::table('products as p')
+            ->leftJoin('subproducts as s', 'p.id', '=', 's.product_id')
+            ->leftJoin('sub_category as sc', 'p.sub_category_id', '=', 'sc.id')
+            ->leftJoin('categories as c', 'sc.category_id', '=', 'c.id')
+            ->leftJoin('colors as col', 's.color_id', '=', 'col.id'); // Fixed join condition
+
+
+        // Apply subcategory filter if provided
+        if (isset($params['subcategory']) && $params['subcategory'] !== null) {
+            $query->where('sc.id', '=', $subcategoryId);
+        }
+
+        // Apply category filter if provided
+        if (isset($params['category']) && $params['category'] !== null) {
+            $query->where('c.id', '=', $categoryId);
+        }
+
+        // Apply custom search filter
+        if (isset($params['search'])) {
+            $query->where(function ($q) use ($params) {
+                $q->where('p.product_name', 'LIKE', '%' . $params['search'] . '%')
+                    ->orWhere('p.product_code', 'LIKE', '%' . $params['search'] . '%');
+            });
+        }
+
+        // Apply custom filters if provided
+        if (isset($params['filter_by'])) {
+            foreach ($params['filter_by'] as $column => $value) {
+                $query->where($column, $value);
+            }
+        }
+
+        // Pagination setup
+        $limit = $params['limit'] ?? 10;
+        $page = $params['page'] ?? 1;
+        $offset = ($page - 1) * $limit;
+
+        // Apply ordering
+        $orderBy = $params['order_by'] ?? 'p.created_at';
+        $order = $params['order'] ?? 'asc';
+        $query->orderBy($orderBy, $order);
+        $total = $query->count();
+        $query->limit($limit)->offset($offset);
+        $productsData = $query->select(
+            'p.id',
+            'p.product_code',
+            'p.product_name',
+            'p.img_url',
+            'p.stockType',
+            's.code',
+             //categories id and name
+            'c.name as category_name',
+            'c.id as category_id',
+            //sub_category id and name
+            'sc.name as sub_category_name',
+            'sc.id as sub_category_id',
+            DB::raw('col.name as color_name'),
+            'col.id as color_id',
+            's.length',
+            's.pieces',
+            's.thickness',
+            's.unit_weight',
+            's.total_weight',
+            's.buy_price',
+            's.sale_price',
+            's.currentStock',
+            's.stockIn',
+            's.stockOut',
+            's.id as subproduct_id',
+            DB::raw("CASE WHEN s.remark THEN 'InStock' ELSE 'PreOrder' END as remark")
+        )->get();
+
+        // If no products found, throw an exception
+        if ($productsData->isEmpty()) {
+            throw new \Exception('No products found!');
+        }
+        // Group the data by product
+        $products = [];
+        foreach ($productsData as $item) {
+            // Group by product id
+            if (!isset($products[$item->id])) {
+                $products[$item->id] = [
+                    'productId' => $item->id,
+                    'productCode' => $item->product_code,
+                    'productName' => $item->product_name,
+                    'productImage' => $item->img_url,
+                    'stockType' => $item->stockType,
+                    'subCategoryId' => $item->sub_category_id ?? null,
+                    'subCategoryName' => $item->sub_category_name ?? null,
+                    'categoryId' => $item->category_id ?? null,
+                    'categoryName' => $item->category_name ?? null,
+                    'products' => []
+                ];
+            }
+
+            // Add subproduct details
+            $products[$item->id]['products'][] = [
+                'id' => $item->subproduct_id,
+                'code' => $item->code,
+                'color' => $item->color_name,
+                'color_id' => $item->color_id,
+                'length' => $item->length,
+                'thickness' => $item->thickness,
+                'pieces' => $item->pieces,
+                'unitWidth' => $item->unit_weight,
+                'totalWeight' => $item->total_weight,
+                'stockIn' => $item->stockIn,
+                'stockOut' => $item->stockOut,
+                'currentStock' => $item->currentStock,
+                'stockType' => $item->stockType,
+                'buyPrice' => $item->buy_price,
+                'sellPrice' => $item->sale_price,
+                'remarks' => $item->remark,
+            ];
+        }
+
+        if (empty($products)) {
+            throw new \Exception('No products found!');
+        }
+        return [
+            'total' => (int)$total,
+            'limit' => (int)$limit,
+            'page' => (int)$page,
+            'total_pages' => (int)ceil($total / $limit),
+            'next_page' => $page < ceil($total / $limit) ? (int)($page + 1) : 0,
+            'prev_page' => $page > 1 ? (int)($page - 1) : 0,
+            'current_page' => (int)$page,
+            'last_page' => (int)ceil($total / $limit),
+            'data' => array_values($products)
+        ];
+    }
+
+
+
+
+
+
     /**
      * Create a new order with items and update stock accordingly and return the created order and have status paid.
      *
