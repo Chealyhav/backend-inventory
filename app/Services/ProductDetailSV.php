@@ -272,4 +272,7 @@ class ProductDetailSV  extends  BaseService
             'data' => array_values($products)
         ];
     }
+
+
+
 }

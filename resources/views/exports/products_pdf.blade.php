@@ -87,9 +87,6 @@
     <div class="header">
         <h1>{{ $title }}</h1>
         <p>Generated on: {{ $date }}</p>
-
-        {{-- <div> {{ $data }} </div> --}}
-
     </div>
 
     <table>
@@ -150,36 +147,5 @@
             @endforeach
         </tbody>
     </table>
-
-    <div class="footer">
-        <p>End of Report</p>
-    </div>
 </body>
 </html>
-{{-- @foreach($data as $index => $product)
-    <tr>
-        <td>{{ $index + 1 }}</td>
-        <td>{{ $product['Product Code'] }}</td>
-        <td>
-            @if($product['Image'] !== 'No Image')
-                <img src="{{ $product['Image'] }}" alt="Product Image" width="50">
-            @else
-                <div class="no-image">No Image</div>
-            @endif
-        </td>
-        <td>{{ $product['Product Name'] }}</td>
-        <td>{{ $product['Code'] }}</td>
-        <td>{{ $product['Color'] }}</td>
-        <td class="text-right">{{ $product['Package'] }}</td>
-        <td class="text-right">{{ $product['Length (mm)'] }}</td>
-        <td class="text-right">{{ $product['Buy Price'] }}</td>
-        <td class="text-right">{{ $product['Sell Price'] }}</td>
-        <td class="text-right">{{ $product['Stock In'] }}</td>
-        <td class="text-right">{{ $product['Stock Out'] }}</td>
-        <td class="text-right @if($product['Stock'] > 0) stock-positive @elseif($product['Stock'] == 0) stock-zero @else stock-negative @endif">
-            {{ $product['Stock'] }}
-        </td>
-        <td>{{ $product['Type'] }}</td>
-        <td>{{ $product['Remarks'] }}</td>
-    </tr>
-@endforeach --}}

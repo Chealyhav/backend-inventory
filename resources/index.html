@@ -3,99 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Table</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .table-container {
-            max-height: calc(100vh - 200px);
-            overflow-y: auto;
-        }
-        .no-image {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-    </style>
+    <title>Products Report</title>
+    <link href="/css/app.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container mt-4">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Product Details</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th rowspan="2">#</th>
-                                <th rowspan="2">SN</th>
-                                <th rowspan="2">Image</th>
-                                <th rowspan="2">Product Name</th>
-                                <th rowspan="2">Code</th>
-                                <th rowspan="2">Color</th>
-                                <th rowspan="2">Package</th>
-                                <th rowspan="2">Length (mm)</th>
-                                <th colspan="2">Price</th>
-                                <th colspan="4">Stock</th>
-                                <th rowspan="2">Remarks</th>
-                            
-                            </tr>
-                            <tr>
-                                <th>Buy Price</th>
-                                <th>Sell Price</th>
-                                <th>Stock In</th>
-                                <th>Stock Out</th>
-                                <th>Current Stock</th>
-                                <th>Stock Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Product Row -->
-                            <tr>
-                                <td rowspan="2">1</td>
-                                <td rowspan="2">#1241</td>
-                                <td rowspan="2" class="text-center">
-                                    <div class="no-image">No Image</div>
-                                </td>
-                                <td rowspan="2">Window</td>
-                                <!-- First Subproduct -->
-                                <td>11</td>
-                                <td>Black</td>
-                                <td>11</td>
-                                <td>12</td>
-                                <td>$12.00</td>
-                                <td>$12.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td><span class="text-danger">0.00</span></td>
-                                <td>pcs</td>
-                                <td>InStock</td>
-                            </tr>
-                            <!-- Second Subproduct -->
-                            <tr>
-                                <td>#0101</td>
-                                <td>Black</td>
-                                <td>11</td>
-                                <td>11</td>
-                                <td>$11.00</td>
-                                <td>$11.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td><span class="text-danger">0.00</span></td>
-                                <td>pcs</td>
-                                <td>InStock</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Products Report</h1>
+            <p class="text-gray-600">Generated on: <span id="current-date"></span></p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-blue-600">
+                        <tr>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">#</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">SN</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Image</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Product Name</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Code</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Color</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Package</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Length (mm)</th>
+                            <th scope="col" colspan="2" class="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Price</th>
+                            <th scope="col" colspan="4" class="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Stock</th>
+                            <th scope="col" rowspan="2" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Remarks</th>
+                        </tr>
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Buy Price</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sell Price</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock In</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock Out</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Current Stock</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock Type</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Product Row -->
+                        <tr class="hover:bg-gray-50">
+                            <td rowspan="2" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1</td>
+                            <td rowspan="2" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">#1241</td>
+                            <td rowspan="2" class="px-6 py-4 whitespace-nowrap">
+                                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xs text-gray-500">No Image</div>
+                            </td>
+                            <td rowspan="2" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Window</td>
+                            <!-- First Subproduct -->
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">11</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Black</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">11</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">12</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">$12.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">$12.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">pcs</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">InStock</td>
+                        </tr>
+                        <!-- Second Subproduct -->
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">#0101</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Black</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">11</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">11</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">$11.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">$11.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">pcs</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">InStock</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-sm text-gray-600">
+            <p>End of Report</p>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+    </script>
 </body>
 </html>

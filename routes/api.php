@@ -17,8 +17,7 @@ use App\Http\Controllers\Api\v1\RoleController;
 use App\Http\Controllers\Api\v1\CloudinaryController;
 use App\Http\Controllers\Api\v1\ProductExportController;
 use App\Http\Controllers\Api\v1\CustomerController;
-use App\Http\Controllers\Api\ExportController;
-
+use App\Http\Controllers\Api\v1\InvoiceController;
 
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
@@ -142,6 +141,24 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::delete('/customers/{id}', [CustomerController::class, 'destroy']);
     Route::post('/customers/{id}/restore', [CustomerController::class, 'restore']);
 
+    ############# invoice management ######################
+    //invoice management
+    Route::get('/invoices', [InvoiceController::class, 'index']);
+    Route::post('/invoices', [InvoiceController::class, 'store']);
+    Route::get('/invoices/{id}', [InvoiceController::class, 'show']);
+    Route::put('/invoices/{id}', [InvoiceController::class, 'update']);
+    Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy']);
+    Route::post('/invoices/{id}/restore', [InvoiceController::class, 'restore']);
+    Route::put('/invoices/{id}/payment-status', [InvoiceController::class, 'updatePaymentStatus']);
+    Route::get('/invoices/{id}/customer', [InvoiceController::class, 'getByCustomer']);
+    Route::get('/invoices/recent', [InvoiceController::class, 'recent']);
+    Route::get('/invoices/statistics', [InvoiceController::class, 'statistics']);
+    Route::get('/invoices/monthly-data', [InvoiceController::class, 'monthlyData']);
+    //invoice exports
+    Route::get('/invoices/export/excel', [InvoiceController::class, 'exportExcel']);
+    Route::get('/invoices/{id}/export/pdf', [InvoiceController::class, 'exportPdf']);
+    Route::get('/invoices/export/pdf', [InvoiceController::class, 'exportAllPdf']);
+
     ############# dashboard management ######################
     //dashboard for sale management
 
@@ -165,8 +182,6 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/create', [SaleController::class, 'createSale']);
 });
 
-Route::post('/export/pdf', [ExportController::class, 'exportPDF']);
-Route::post('/export/excel', [ExportController::class, 'exportExcel']);
 
 //Login and Register
 Route::post('/logout', [AuthController::class, 'logout']);
