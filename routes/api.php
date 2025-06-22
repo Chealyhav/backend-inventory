@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\v1\CloudinaryController;
 use App\Http\Controllers\Api\v1\ProductExportController;
 use App\Http\Controllers\Api\v1\CustomerController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\v1\ExportpdfController;
 
 
 
@@ -165,5 +166,11 @@ Route::post('/export/excel', [ExportController::class, 'exportExcel']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/login', [AuthController::class, 'login']);
+
+
+Route::prefix('export')->group(function () {
+    Route::get('/users/pdf', [ExportpdfController::class, 'exportUsersPdf']);
+    Route::get('/users/excel', [ExportpdfController::class, 'exportUsersExcel']);
+});
 
 
