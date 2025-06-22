@@ -1,9 +1,11 @@
 # stage 1: build stage
+# stage 1: build stage
 FROM php:8.2-fpm-alpine AS build
 
 # Installing system dependencies and PHP extensions
 RUN apk add --no-cache \
     zip \
+    git \
     libzip-dev \
     freetype \
     libjpeg-turbo \
@@ -20,6 +22,10 @@ RUN apk add --no-cache \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable gd
+
+# Set environment to fix Composer root and timeout warnings
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_PROCESS_TIMEOUT=900
 
 # Install composer
 COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
@@ -91,3 +97,4 @@ VOLUME ["/var/www/html/storage/app"]
 
 # Auto-migrate and run services (nginx and php-fpm)
 CMD ["sh", "-c", "nginx && php-fpm"]
+
