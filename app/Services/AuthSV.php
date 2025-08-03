@@ -11,6 +11,7 @@ use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Illuminate\Support\Facades\Hash;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 
 class AuthSV extends BaseService
 {
@@ -119,7 +120,11 @@ class AuthSV extends BaseService
         ];
     }
 
-    // Refresh JWT token
+    // Refresh JWT token to expire 7 days
+    // This method refreshes the JWT token and returns a new token with an expiration of 7 days.
+    // It catches TokenExpiredException to handle expired tokens gracefully.
+    // If the token is successfully refreshed, it returns the new token along with its type and
+    
     public function refresh()
     {
         try {

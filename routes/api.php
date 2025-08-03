@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\AuthController;
+use App\Http\Controllers\Api\v1\MessageController;
 use App\Http\Controllers\Api\v1\TelegramController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\ColorController;
@@ -18,11 +19,49 @@ use App\Http\Controllers\Api\v1\CloudinaryController;
 use App\Http\Controllers\Api\v1\ProductExportController;
 use App\Http\Controllers\Api\v1\CustomerController;
 use App\Http\Controllers\Api\v1\InvoiceController;
-
+use App\Models\ChatMessage;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Events\MessageSent;
+use App\Models\Message;
 
 Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($router) {
 
+    // User-to-user chat message routes
+    Route::get('/messages/{user}', function (User $user, Request $request) {
+        return Message::query()
+            ->where(function ($query) use ($user, $request) {
+                $query->where('sender_id', $request->user()->id)
+                    ->where('receiver_id', $user->id);
+            })
+            ->orWhere(function ($query) use ($user, $request) {
+                $query->where('sender_id', $user->id)
+                    ->where('receiver_id', $request->user()->id);
+            })
+            ->with(['sender', 'receiver'])
+            ->orderBy('id', 'asc')
+            ->get();
+    });
 
+    Route::post('/messages/{user}', function (User $user, Request $request) {
+        $request->validate([
+            'message' => 'required|string'
+        ]);
+
+        $message = Message::create([
+            'sender_id' => $request->user()->id,
+            'receiver_id' => $user->id,
+            'text' => $request->message
+        ]);
+
+        broadcast(new MessageSent($message));
+
+        return $message;
+    });
+
+    //meaage
+    Route::get('/messages', [MessageController::class, 'index']);
+    Route::post('/messages', [MessageController::class, 'store']);
     ################# user management ######################
 
     //authentication
@@ -180,6 +219,8 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'auth/v1'], function ($rou
     Route::post('/invoice', [SaleController::class, 'createInvoice']);
     Route::post('/payment', [SaleController::class, 'createPayment']);
     Route::post('/create', [SaleController::class, 'createSale']);
+    Route::post('messages/{id}/seen', [MessageController::class, 'seen']);
+
 });
 
 
@@ -198,3 +239,11 @@ Route::get('order/{id}', [SaleController::class, 'getOrderDetails']);
 Route::get('/get_aluminum', [ProductDetailController::class, 'getAluminum']);
 Route::get('/get_accessories', [ProductDetailController::class, 'getAccessories']);
 Route::get('/product_details', [SaleController::class, 'productDetail']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::post('/categories', [CategoryController::class, 'store']);
+
+
+Route::get('/messages', [MessageController::class, 'index']);
+Route::post('/messages', [MessageController::class, 'store']);
+Route::post('messages/{id}/seen', [MessageController::class, 'seen']);
+

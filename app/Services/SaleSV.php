@@ -351,9 +351,9 @@ class SaleSV extends BaseService
                 'order_id'          => $order->id,
                 'customer_id'       => $order->customer_id ?? 1,
                 'service_name'      => $params['service_name'] ?? null,
-                'amount_paid'       => $params['amount'],
+                'amount_paid'       => $params['amount']?? 0,
                 'payment_reference' => $params['payment_reference'],
-                'payment_status'    => $params['payment_status'] ?? 'paid',
+                'payment_status' => $params['payment_status'] ?? 'pending',
                 'notes'             => $params['notes'] ?? null,
                 'amount'            => $params['amount'],
                 'payment_method'    => $params['payment_method'] ?? 'cash',
@@ -439,6 +439,126 @@ class SaleSV extends BaseService
             DB::rollBack();
             Log::error('Invoice creation error: ' . $e->getMessage());
             throw new \Exception('Invoice creation failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Create multiple orders with items and update stock accordingly.
+     *
+     * @param array $ordersData Array of order data
+     * @return array Array of created orders
+     * @throws \Exception
+     */
+    public function createMultipleOrders(array $ordersData = [])
+    {
+        try {
+            DB::beginTransaction();
+
+            if (empty($ordersData) || !is_array($ordersData)) {
+                throw new \InvalidArgumentException('Orders data array is required.');
+            }
+
+            $createdOrders = [];
+
+            foreach ($ordersData as $orderIndex => $orderParams) {
+                // Validate required parameters for each order
+                if (empty($orderParams['items']) || !is_array($orderParams['items'])) {
+                    throw new \InvalidArgumentException("Order items are required for order at index {$orderIndex}.");
+                }
+
+                $allowedSaleTypes = ['Finished Good', 'Material'];
+                if (!in_array($orderParams['sale_type'] ?? '', $allowedSaleTypes)) {
+                    throw new \InvalidArgumentException("Invalid sale_type for order at index {$orderIndex}. Allowed values: " . implode(', ', $allowedSaleTypes));
+                }
+
+                // If sale_type == Finished Good, order must have title
+                if ($orderParams['sale_type'] === 'Finished Good' && empty($orderParams['title'])) {
+                    throw new \InvalidArgumentException("Title is required for Finished Good sale type at order index {$orderIndex}.");
+                }
+
+                // Create the order
+                $order = $this->getQuery()->create([
+                    'order_code'   => $orderParams['order_code'] ?? 'ORD-' . time() . '-' . $orderIndex,
+                    'customer_id' => $orderParams['customer_id'] ?? null,
+                    'sale_type'    => $orderParams['sale_type'] ?? 'POS',
+                    'total_price'  => $orderParams['total_price'] ?? 0,
+                    'order_date'   => now(),
+                    'status'       => $orderParams['status'] ?? false,
+                    'title'        => $orderParams['title'] ?? null,
+                    'created_by'   => $orderParams['created_by'] ?? null,
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                    'updated_by'   => $orderParams['created_by'] ?? null,
+                ]);
+
+                $orderItems = [];
+
+                // Insert order items and update stock
+                foreach ($orderParams['items'] as $itemIndex => $item) {
+                    if (
+                        !isset($item['subproduct_id'], $item['quantity'], $item['price'])
+                        || $item['quantity'] <= 0
+                    ) {
+                        throw new \InvalidArgumentException("Each item must have subproduct_id, quantity (>0), and price for order at index {$orderIndex}, item at index {$itemIndex}.");
+                    }
+
+                    if (!isset($item['subproduct_id']) || !is_numeric($item['subproduct_id'])) {
+                        throw new \InvalidArgumentException("Invalid subproduct_id for item at order index {$orderIndex}, item at index {$itemIndex}.");
+                    }
+
+                    // Select sale_price and stock from subproducts table
+                    $subproduct = DB::table('subproducts')
+                        ->select('sale_price', 'currentStock')
+                        ->where('id', $item['subproduct_id'])
+                        ->first();
+
+                    if (!$subproduct) {
+                        throw new \InvalidArgumentException("Subproduct not found for ID: {$item['subproduct_id']} at order index {$orderIndex}, item at index {$itemIndex}.");
+                    }
+
+                    if ($subproduct->currentStock < $item['quantity']) {
+                        throw new \InvalidArgumentException("Not enough stock for subproduct ID: {$item['subproduct_id']} at order index {$orderIndex}, item at index {$itemIndex}.");
+                    }
+
+                    // Calculate total price for the item
+                    $item['unit_price'] = (isset($item['price']) && $item['price'] > 0)
+                        ? (float) $item['price']
+                        : (float) $subproduct->sale_price;
+                    $item['total_price'] = $item['quantity'] * $item['unit_price'];
+
+                    // Create order item
+                    $orderItems[] = OrderItem::create([
+                        'order_id'      => $order->id,
+                        'subproduct_id' => $item['subproduct_id'],
+                        'quantity'      => $item['quantity'],
+                        'unit_price'    => $item['unit_price'],
+                        'total_price'   => $item['total_price'],
+                        'order_date'    => now(),
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
+                    ]);
+
+                    // Update stock for the subproduct
+                    DB::table('subproducts')
+                        ->where('id', $item['subproduct_id'])
+                        ->update([
+                            'currentStock' => DB::raw('"subproducts"."currentStock" - ' . (int)$item['quantity']),
+                            'stockOut' => DB::raw('"subproducts"."stockOut" + ' . (int)$item['quantity']),
+                        ]);
+                }
+
+                $createdOrders[] = [
+                    'order' => $order,
+                    'items' => $orderItems
+                ];
+            }
+
+            DB::commit();
+            return $createdOrders;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Multiple orders creation error: ' . $e->getMessage());
+            throw new \Exception('Multiple orders creation failed: ' . $e->getMessage());
         }
     }
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('amount_paid', 10, 2);
             $table->string('payment_reference')->nullable();
             $table->string('payment_method')->default('cash');
-            $table->enum('payment_status', ['pending', 'paid', 'partially_paid', 'cancelled'])->default('pending');
+            $table->string('payment_status')->default('pending');
             $table->string('notes')->nullable();
             $table->date('payment_date')->useCurrent();
 

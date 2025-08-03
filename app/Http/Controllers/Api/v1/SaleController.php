@@ -221,8 +221,17 @@ class SaleController extends BaseAPI
     {
         try {
             $params = $request->all();
-            $orderId = $this->saleService->createOrder($params);
-            return $this->successResponse($orderId, 'Order created successfully.');
+
+            // Check if the request contains multiple orders (array of orders)
+            if (isset($params[0]) && is_array($params[0])) {
+                // Multiple orders detected - use createMultipleOrders
+                $orders = $this->saleService->createMultipleOrders($params);
+                return $this->successResponse($orders, 'Multiple orders created successfully.');
+            } else {
+                // Single order - use createOrder
+                $orderId = $this->saleService->createOrder($params);
+                return $this->successResponse($orderId, 'Order created successfully.');
+            }
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
